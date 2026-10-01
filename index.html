@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VolleyStats</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 18px 15px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 14px;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.main-button {
+  width: 100%;
+  border: none;
+  border-radius: 13px;
+  padding: 15px;
+  background: #111827;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.secondary-button {
+  width: 100%;
+  border: none;
+  border-radius: 13px;
+  padding: 13px;
+  background: #e5e7eb;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.danger {
+  background: #b91c1c;
+  color: white;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* NAVIGATION */
+
+.navigation {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.nav-button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 5px;
+  background: #e5e7eb;
+  font-weight: 700;
+}
+
+.nav-button.active {
+  background: #111827;
+  color: white;
+}
+
+/* SPIELE */
+
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.match-title {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.match-result {
+  font-size: 25px;
+  font-weight: 800;
+  margin: 6px 0;
+}
+
+.match-date {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* FORMULAR */
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  font-size: 16px;
+  background: white;
+}
+
+label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* KADER */
+
+.roster-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 120px 45px;
+  gap: 7px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.roster-row input,
+.roster-row select {
+  margin: 0;
+}
+
+.delete-player {
+  border: none;
+  border-radius: 9px;
+  height: 42px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 800;
+}
+
+/* LIVE */
+
+.score-card {
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 14px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.opponent-name {
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.score {
+  font-size: 44px;
+  font-weight: 900;
+  margin: 3px 0;
+}
+
+.set-label {
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.score-controls {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.score-controls button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: #e5e7eb;
+  font-weight: 700;
+}
+
+/* FELD */
+
+.court {
+  background: #e5e7eb;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.net {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b7280;
+  margin-bottom: 7px;
+}
+
+.court-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.position {
+  border: none;
+  border-radius: 13px;
+  background: white;
+  min-height: 80px;
+  padding: 8px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.position-number {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.player-name {
+  display: block;
+  font-size: 15px;
+}
+
+.player-number {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* BANK */
+
+.bank {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+}
+
+.bank-player {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 5px;
+  background: #e5e7eb;
+  font-weight: 700;
+  min-height: 60px;
+}
+
+/* AKTIONEN */
+
+.selected-player {
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 9px;
+}
+
+.category-button {
+  border: none;
+  border-radius: 14px;
+  padding: 17px 8px;
+  background: #e5e7eb;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 9px;
+}
+
+.action-button {
+  border: none;
+  border-radius: 14px;
+  padding: 17px 8px;
+  background: #e5e7eb;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.action-positive {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.action-negative {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.action-neutral {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* LETZTE AKTION */
+
+.last-action {
+  background: #f3f4f6;
+  border-radius: 11px;
+  padding: 11px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* STATISTIK */
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 9px 5px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.stats-table th:first-child,
+.stats-table td:first-child {
+  text-align: left;
+}
+
+/* MODAL */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-buttons {
+  display: grid;
+  gap: 8px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+
+  .roster-row {
+    grid-template-columns: 1fr 55px 105px 40px;
+  }
+
+  .bank {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏐 VolleyStats</h1>
+</header>
+
+<div class="container">
+
+<!-- NAVIGATION -->
+
+<div class="navigation">
+  <button id="navGames" class="nav-button active" onclick="showPage('games')">
+    🏠 Spiele
+  </button>
+
+  <button id="navLive" class="nav-button" onclick="showPage('live')">
+    🏐 Live
+  </button>
+
+  <button id="navRoster" class="nav-button" onclick="showPage('roster')">
+    👥 Kader
+  </button>
+</div>
+
+
+<!-- =======================
+     SPIELE
+======================= -->
+
+<div id="pageGames">
+
+  <div class="card">
+    <h2>Meine Spiele</h2>
+
+    <button class="main-button" onclick="newGame()">
+      ➕ Neues Spiel
+    </button>
+  </div>
+
+  <div class="card">
+    <div id="matchList" class="match-list"></div>
+  </div>
+
+</div>
+
+
+<!-- =======================
+     KADER
+======================= -->
+
+<div id="pageRoster" class="hidden">
+
+  <div class="card">
+
+    <h2>👥 Mein Kader</h2>
+
+    <p style="color:#6b7280;">
+      Name, Rückennummer und Position einmal eintragen.
+      Die Spielerinnen bleiben für alle Spiele gespeichert.
+    </p>
+
+    <div id="rosterList"></div>
+
+    <button class="secondary-button" onclick="addPlayer()">
+      ➕ Spielerin hinzufügen
+    </button>
+
+    <button class="main-button" onclick="saveRoster()">
+      💾 Kader speichern
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h2>💾 Datensicherung</h2>
+
+    <button class="main-button" onclick="exportAllData()">
+      📤 Alle Daten exportieren
+    </button>
+
+    <button class="secondary-button" onclick="document.getElementById('importFile').click()">
+      📥 Daten importieren
+    </button>
+
+    <input
+      id="importFile"
+      type="file"
+      accept=".json"
+      style="display:none"
+      onchange="importAllData(event)"
+    >
+
+  </div>
+
+</div>
+
+
+<!-- =======================
+     LIVE
+======================= -->
+
+<div id="pageLive" class="hidden">
+
+  <!-- SCORE -->
+
+  <div class="score-card">
+
+    <div style="font-weight:800;">
+      Wir
+      <span style="margin:0 8px;">:</span>
+      <span id="liveOpponent">Gegner</span>
+    </div>
+
+    <div class="score">
+      <span id="liveScoreUs">0</span>
+      :
+      <span id="liveScoreOpponent">0</span>
+    </div>
+
+    <div class="set-label">
+      Satz <span id="liveSet">1</span>
+    </div>
+
+    <div class="score-controls">
+      <button onclick="manualScore('us',1)">+1 Wir</button>
+      <button onclick="manualScore('us',-1)">−1 Wir</button>
+      <button onclick="manualScore('opponent',1)">+1 Gegner</button>
+      <button onclick="manualScore('opponent',-1)">−1 Gegner</button>
+    </div>
+
+  </div>
+
+
+  <!-- FELD -->
+
+  <div class="card">
+
+    <h2>🏐 Feld</h2>
+
+    <div class="court">
+
+      <div class="net">NETZ</div>
+
+      <div class="court-row">
+        <button id="position4" class="position" onclick="selectPosition(4)"></button>
+        <button id="position3" class="position" onclick="selectPosition(3)"></button>
+        <button id="position2" class="position" onclick="selectPosition(2)"></button>
+      </div>
+
+      <div class="court-row">
+        <button id="position5" class="position" onclick="selectPosition(5)"></button>
+        <button id="position6" class="position" onclick="selectPosition(6)"></button>
+        <button id="position1" class="position" onclick="selectPosition(1)"></button>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:#6b7280;text-align:center;">
+      Spielerin antippen, um eine Aktion zu erfassen.
+    </p>
+
+  </div>
+
+
+  <!-- BANK -->
+
+  <div class="card">
+
+    <h2>🪑 Auswechselbank</h2>
+
+    <div id="bench" class="bank"></div>
+
+  </div>
+
+
+  <!-- AKTION -->
+
+  <div class="card">
+
+    <div id="selectedPlayerInfo" class="selected-player">
+      Keine Spielerin ausgewählt
+    </div>
+
+    <div id="categoryArea">
+
+      <h2>Was ist passiert?</h2>
+
+      <div class="category-grid">
+
+        <button class="category-button" onclick="openCategory('attack')">
+          🏐 Angriff
+        </button>
+
+        <button class="category-button" onclick="openCategory('reception')">
+          👐 Annahme
+        </button>
+
+        <button class="category-button" onclick="openCategory('serve')">
+          🎯 Aufschlag
+        </button>
+
+        <button class="category-button" onclick="openCategory('block')">
+          🧱 Block
+        </button>
+
+        <button class="category-button" onclick="openCategory('defense')">
+          🛡️ Abwehr
+        </button>
+
+      </div>
+
+    </div>
+
+    <div id="actionArea" class="hidden">
+
+      <button class="secondary-button" onclick="backToCategories()">
+        ← Zurück
+      </button>
+
+      <h2 id="actionTitle" style="margin-top:15px;"></h2>
+
+      <div id="actionButtons" class="action-grid"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- LETZTE AKTION -->
+
+  <div class="card">
+
+    <div id="lastAction" class="last-action">
+      Noch keine Aktion
+    </div>
+
+    <button class="secondary-button" onclick="undoLastAction()">
+      ↩️ Letzte Aktion rückgängig
+    </button>
+
+  </div>
+
+
+  <!-- SATZ -->
+
+  <div class="card">
+
+    <h2>📋 Satz</h2>
+
+    <button class="secondary-button" onclick="finishSet()">
+      Satz beenden
+    </button>
+
+    <button class="main-button" onclick="finishGame()">
+      🏁 Spiel beenden
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =======================
+     MODAL NEUES SPIEL
+======================= -->
+
+<div id="newGameModal" class="modal hidden">
+
+  <div class="modal-content">
+
+    <h2>➕ Neues Spiel</h2>
+
+    <label>Gegner</label>
+    <input id="newOpponent" placeholder="z. B. Dachau">
+
+    <label>Datum</label>
+    <input id="newDate" type="date">
+
+    <label>Start-Satz</label>
+    <select id="newSet">
+      <option value="1">1. Satz</option>
+      <option value="2">2. Satz</option>
+      <option value="3">3. Satz</option>
+      <option value="4">4. Satz</option>
+      <option value="5">5. Satz</option>
+    </select>
+
+    <div class="modal-buttons">
+
+      <button class="main-button" onclick="createGame()">
+        🏐 Spiel starten
+      </button>
+
+      <button class="secondary-button" onclick="closeNewGameModal()">
+        Abbrechen
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================
+     MODAL SPIELER
+======================= -->
+
+<div id="playerSelectModal" class="modal hidden">
+
+  <div class="modal-content">
+
+    <h2 id="playerSelectTitle">Spielerin auswählen</h2>
+
+    <div id="playerSelectList"></div>
+
+    <button class="secondary-button" onclick="closePlayerModal()">
+      Abbrechen
+    </button>
+
+  </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATEN
+===================================================== */
+
+const STORAGE_KEY = "volleystats_v2";
+
+let data = loadData();
+
+let currentGameId = null;
+let selectedPlayerId = null;
+let currentCategory = null;
+let selectedPosition = null;
+
+
+/* =====================================================
+   STANDARD-DATEN
+===================================================== */
+
+function createDefaultData() {
+
+  return {
+    roster: [],
+    games: []
+  };
+
+}
+
+
+function loadData() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      return JSON.parse(saved);
+    }
+
+  } catch(e) {
+
+    console.log(e);
+
+  }
+
+  return createDefaultData();
+
+}
+
+
+function saveData() {
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* =====================================================
+   SEITEN
+===================================================== */
+
+function showPage(page) {
+
+  document.getElementById("pageGames")
+    .classList.toggle("hidden", page !== "games");
+
+  document.getElementById("pageLive")
+    .classList.toggle("hidden", page !== "live");
+
+  document.getElementById("pageRoster")
+    .classList.toggle("hidden", page !== "roster");
+
+  document.getElementById("navGames")
+    .classList.toggle("active", page === "games");
+
+  document.getElementById("navLive")
+    .classList.toggle("active", page === "live");
+
+  document.getElementById("navRoster")
+    .classList.toggle("active", page === "roster");
+
+  if (page === "games") {
+    renderGames();
+  }
+
+  if (page === "roster") {
+    renderRoster();
+  }
+
+  if (page === "live") {
+    renderLive();
+  }
+
+}
+
+
+/* =====================================================
+   KADER
+===================================================== */
+
+function addPlayer() {
+
+  data.roster.push({
+
+    id: Date.now() + Math.random(),
+
+    name: "",
+
+    number: "",
+
+    position: "Außen"
+
+  });
+
+  renderRoster();
+
+}
+
+
+function renderRoster() {
+
+  const container =
+    document.getElementById("rosterList");
+
+  container.innerHTML = "";
+
+  if (data.roster.length === 0) {
+
+    container.innerHTML =
+      "<p style='color:#6b7280;'>Noch keine Spielerinnen angelegt.</p>";
+
+    return;
+
+  }
+
+  data.roster.forEach(player => {
+
+    const row =
+      document.createElement("div");
+
+    row.className = "roster-row";
+
+    row.innerHTML = `
+
+      <input
+        placeholder="Name"
+        value="${escapeHTML(player.name)}"
+        data-id="${player.id}"
+        data-field="name"
+      >
+
+      <input
+        type="number"
+        placeholder="Nr."
+        value="${player.number}"
+        data-id="${player.id}"
+        data-field="number"
+      >
+
+      <select
+        data-id="${player.id}"
+        data-field="position">
+
+        ${positionOptions(player.position)}
+
+      </select>
+
+      <button
+        class="delete-player"
+        onclick="deletePlayer(${player.id})">
+        ×
+      </button>
+
+    `;
+
+    container.appendChild(row);
+
+  });
+
+}
+
+
+function positionOptions(selected) {
+
+  const positions = [
+
+    "Außen",
+    "Diagonal",
+    "Zuspiel",
+    "Mitte",
+    "Libera",
+    "Universal"
+
+  ];
+
+  return positions.map(p =>
+
+    `<option ${p === selected ? "selected" : ""}>
+      ${p}
+    </option>`
+
+  ).join("");
+
+}
+
+
+function saveRoster() {
+
+  document
+    .querySelectorAll("#rosterList [data-id]")
+    .forEach(element => {
+
+      const id =
+        Number(element.dataset.id);
+
+      const player =
+        data.roster.find(
+          p => Number(p.id) === id
+        );
+
+      if (!player) return;
+
+      player[element.dataset.field] =
+        element.value;
+
+    });
+
+  saveData();
+
+  alert("Kader gespeichert.");
+
+}
+
+
+function deletePlayer(id) {
+
+  if (!confirm("Spielerin wirklich löschen?")) {
+    return;
+  }
+
+  data.roster =
+    data.roster.filter(
+      p => Number(p.id) !== Number(id)
+    );
+
+  saveData();
+
+  renderRoster();
+
+}
+
+
+/* =====================================================
+   NEUES SPIEL
+===================================================== */
+
+function newGame() {
+
+  document.getElementById("newOpponent").value = "";
+
+  const today =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+  document.getElementById("newDate").value =
+    today;
+
+  document.getElementById("newSet").value =
+    "1";
+
+  document
+    .getElementById("newGameModal")
+    .classList.remove("hidden");
+
+}
+
+
+function closeNewGameModal() {
+
+  document
+    .getElementById("newGameModal")
+    .classList.add("hidden");
+
+}
+
+
+function createGame() {
+
+  const opponent =
+    document
+      .getElementById("newOpponent")
+      .value
+      .trim();
+
+  if (!opponent) {
+
+    alert("Bitte Gegner eingeben.");
+
+    return;
+
+  }
+
+  const date =
+    document.getElementById("newDate").value;
+
+  const set =
+    Number(
+      document.getElementById("newSet").value
+    );
+
+  const game = {
+
+    id: Date.now(),
+
+    opponent: opponent,
+
+    date: date,
+
+    currentSet: set,
+
+    scoreUs: 0,
+
+    scoreOpponent: 0,
+
+    sets: [],
+
+    actions: [],
+
+    lineup: {
+
+      1: null,
+      2: null,
+      3: null,
+      4: null,
+      5: null,
+      6: null
+
+    },
+
+    finished: false
+
+  };
+
+  data.games.unshift(game);
+
+  saveData();
+
+  currentGameId = game.id;
+
+  closeNewGameModal();
+
+  setupLineup();
+
+  showPage("live");
+
+}
+
+
+/* =====================================================
+   SPIELELISTE
+===================================================== */
+
+function renderGames() {
+
+  const container =
+    document.getElementById("matchList");
+
+  container.innerHTML = "";
+
+  if (data.games.length === 0) {
+
+    container.innerHTML = `
+      <p style="color:#6b7280;text-align:center;">
+        Noch keine Spiele vorhanden.
+      </p>
+    `;
+
+    return;
+
+  }
+
+  data.games.forEach(game => {
+
+    const item =
+      document.createElement("div");
+
+    item.className = "match-item";
+
+    const setResult =
+      game.sets
+        .map(s =>
+          `${s.us}:${s.opponent}`
+        )
+        .join(" · ");
+
+    item.innerHTML = `
+
+      <div class="match-title">
+        Wir – ${escapeHTML(game.opponent)}
+      </div>
+
+      <div class="match-result">
+        ${game.scoreUs} : ${game.scoreOpponent}
+      </div>
+
+      <div class="match-date">
+        ${formatDate(game.date)}
+      </div>
+
+      ${
+        setResult
+          ? `<div style="margin-top:5px;color:#6b7280;">
+              ${setResult}
+             </div>`
+          : ""
+      }
+
+      <button
+        class="main-button"
+        onclick="openGame(${game.id})">
+        ${game.finished ? "📊 Spiel öffnen" : "🏐 Spiel fortsetzen"}
+      </button>
+
+    `;
+
+    container.appendChild(item);
+
+  });
+
+}
+
+
+function openGame(id) {
+
+  currentGameId = id;
+
+  setupLineup();
+
+  showPage("live");
+
+}
+
+
+/* =====================================================
+   AKTUELLES SPIEL
+===================================================== */
+
+function currentGame() {
+
+  return data.games.find(
+    g => Number(g.id) === Number(currentGameId)
+  );
+
+}
+
+
+function renderLive() {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  document.getElementById("liveOpponent")
+    .textContent =
+      game.opponent;
+
+  document.getElementById("liveScoreUs")
+    .textContent =
+      game.scoreUs;
+
+  document.getElementById("liveScoreOpponent")
+    .textContent =
+      game.scoreOpponent;
+
+  document.getElementById("liveSet")
+    .textContent =
+      game.currentSet;
+
+  renderCourt();
+
+  renderBench();
+
+}
+
+
+/* =====================================================
+   AUFSTELLUNG
+===================================================== */
+
+function setupLineup() {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  const used =
+    Object.values(game.lineup)
+      .filter(Boolean);
+
+  const available =
+    data.roster
+      .filter(
+        p => !used.includes(p.id)
+      );
+
+  let index = 0;
+
+  for (let pos = 1; pos <= 6; pos++) {
+
+    if (!game.lineup[pos] && available[index]) {
+
+      game.lineup[pos] =
+        available[index].id;
+
+      index++;
+
+    }
+
+  }
+
+  saveData();
+
+  renderLive();
+
+}
+
+
+function renderCourt() {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  for (let pos = 1; pos <= 6; pos++) {
+
+    const button =
+      document.getElementById(
+        "position" + pos
+      );
+
+    const playerId =
+      game.lineup[pos];
+
+    const player =
+      data.roster.find(
+        p => Number(p.id) === Number(playerId)
+      );
+
+    if (!player) {
+
+      button.innerHTML = `
+
+        <span class="position-number">
+          Position ${pos}
+        </span>
+
+        <span class="player-name">
+          frei
+        </span>
+
+      `;
+
+      continue;
+
+    }
+
+    button.innerHTML = `
+
+      <span class="position-number">
+        Position ${pos}
+      </span>
+
+      <span class="player-name">
+        ${escapeHTML(player.name || "Ohne Name")}
+      </span>
+
+      <span class="player-number">
+        ${player.number || "–"} · ${player.position}
+      </span>
+
+    `;
+
+  }
+
+}
+
+
+function renderBench() {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  const used =
+    Object.values(game.lineup)
+      .filter(Boolean);
+
+  const bench =
+    data.roster.filter(
+      p => !used.includes(p.id)
+    );
+
+  const container =
+    document.getElementById("bench");
+
+  container.innerHTML = "";
+
+  if (bench.length === 0) {
+
+    container.innerHTML =
+      "<p style='color:#6b7280;'>Keine Auswechselspielerinnen.</p>";
+
+    return;
+
+  }
+
+  bench.forEach(player => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "bank-player";
+
+    button.innerHTML = `
+      ${escapeHTML(player.name || "Ohne Name")}
+      <br>
+      <small>
+        ${player.number || "–"} · ${player.position}
+      </small>
+    `;
+
+    button.onclick = () =>
+      choosePositionForPlayer(player.id);
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+/* =====================================================
+   WECHSEL
+===================================================== */
+
+function selectPosition(position) {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  const playerId =
+    game.lineup[position];
+
+  if (!playerId) {
+
+    choosePlayerForPosition(position);
+
+    return;
+
+  }
+
+  selectedPlayerId = playerId;
+
+  showPlayerActions();
+
+}
+
+
+function choosePositionForPlayer(playerId) {
+
+  const game = currentGame();
+
+  if (!game) return;
+
+  const positions = [];
+
+  for (let pos = 1; pos <= 6; pos++) {
+
+    const current =
+      game.lineup[pos];
+
+    if (!current) {
+
+      positions.push(pos);
+
+    }
+
+  }
+
+  if (positions.length === 0) {
+
+    const position =
+      prompt(
+        "Welche Position soll die Spielerin übernehmen? (1–6)"
+      );
+
+    const pos =
+      Number(position);
+
+    if (pos >= 1 && pos <= 6) {
+
+      const oldPlayer =
+        game.lineup[pos];
+
+      game.lineup[pos] =
+        playerId;
+
+      saveData();
+
+      renderLive();
+
+    }
+
+    return;
+
+  }
+
+  const text =
+    positions
+      .map(p => "Position " + p)
+      .join(", ");
+
+  const position =
+    prompt(
+      "Spielerin einsetzen auf:\n" + text
+    );
+
+  const pos =
+    Number(position);
+
+  if (
+    positions.includes(pos)
+  ) {
+
+    game.lineup[pos] =
+      playerId;
+
+    saveData();
+
+    renderLive();
+
+  }
+
+}
+
+
+/* =====================================================
+   SPIELER FÜR POSITION AUSWÄHLEN
+===================================================== */
+
+function choosePlayerForPosition(position) {
+
+  selectedPosition =
+    position;
+
+  const game =
+    currentGame();
+
+  const used =
+    Object.values(game.lineup)
+      .filter(Boolean);
+
+  const players =
+    data.roster.filter(
+      p => !used.includes(p.id)
+    );
+
+  openPlayerModal(
+    "Spielerin für Position " + position,
+    players,
+    player => {
+
+      game.lineup[position] =
+        player.id;
+
+      saveData();
+
+      closePlayerModal();
+
+      renderLive();
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   SPIELER AKTION
+===================================================== */
+
+function showPlayerActions() {
+
+  const player =
+    data.roster.find(
+      p => Number(p.id) === Number(selectedPlayerId)
+    );
+
+  if (!player) return;
+
+  document.getElementById(
+    "selectedPlayerInfo"
+  ).textContent =
+    `${player.name} · ${player.number || "–"} · ${player.position}`;
+
+  document.getElementById(
+    "categoryArea"
+  ).classList.remove("hidden");
+
+  document.getElementById(
+    "actionArea"
+  ).classList.add("hidden");
+
+}
+
+
+function openCategory(category) {
+
+  if (!selectedPlayerId) {
+
+    alert("Bitte zuerst eine Spielerin auswählen.");
+
+    return;
+
+  }
+
+  currentCategory =
+    category;
+
+  document.getElementById(
+    "categoryArea"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "actionArea"
+  ).classList.remove("hidden");
+
+  const titles = {
+
+    attack: "🏐 Angriff",
+
+    reception: "👐 Annahme",
+
+    serve: "🎯 Aufschlag",
+
+    block: "🧱 Block",
+
+    defense: "🛡️ Abwehr"
+
+  };
+
+  document.getElementById(
+    "actionTitle"
+  ).textContent =
+    titles[category];
+
+  renderActionButtons();
+
+}
+
+
+function renderActionButtons() {
+
+  const container =
+    document.getElementById(
+      "actionButtons"
+    );
+
+  container.innerHTML = "";
+
+  const options = {
+
+    attack: [
+
+      ["kill","🟢 Punkt","positive",1,0],
+
+      ["playable","🟡 Spielbar","neutral",0,0],
+
+      ["error","🔴 Fehler","negative",0,1],
+
+      ["blocked","⛔ Geblockt","negative",0,1]
+
+    ],
+
+    reception: [
+
+      ["positive","🟢 ++ / Positiv","positive",0,0],
+
+      ["neutral","🟡 + / Neutral","neutral",0,0],
+
+      ["negative","🟠 - / Negativ","neutral",0,0],
+
+      ["error","🔴 Annahmefehler / Ass","negative",0,1]
+
+    ],
+
+    serve: [
+
+      ["ace","🟢 ASS","positive",1,0],
+
+      ["pressure","🟢 Druckvoll","positive",0,0],
+
+      ["normal","⚪ Im Spiel","neutral",0,0],
+
+      ["error","🔴 Aufschlagfehler","negative",0,1]
+
+    ],
+
+    block: [
+
+      ["point","🟢 Blockpunkt","positive",1,0],
+
+      ["touch","🟡 Touch","neutral",0,0],
+
+      ["error","🔴 Blockfehler","negative",0,1]
+
+    ],
+
+    defense: [
+
+      ["successful","🟢 Erfolgreich","positive",0,0],
+
+      ["error","🔴 Fehler","negative",0,1]
+
+    ]
+
+  };
+
+  options[currentCategory].forEach(option => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "action-button action-" +
+      option[2];
+
+    button.textContent =
+      option[1];
+
+    button.onclick = () =>
+      recordAction(
+        option[0],
+        option[3],
+        option[4]
+      );
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+function backToCategories() {
+
+  document.getElementById(
+    "actionArea"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "categoryArea"
+  ).classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   AKTION SPEICHERN
+===================================================== */
+
+function recordAction(
+  type,
+  usPoint,
+  opponentPoint
+) {
+
+  const game =
+    currentGame();
+
+  if (!game || !selectedPlayerId) return;
+
+  const player =
+    data.roster.find(
+      p => Number(p.id) === Number(selectedPlayerId)
+    );
+
+  const action = {
+
+    id: Date.now(),
+
+    playerId:
+      player.id,
+
+    playerName:
+      player.name,
+
+    category:
+      currentCategory,
+
+    type:
+      type,
+
+    usPoint:
+      usPoint,
+
+    opponentPoint:
+      opponentPoint,
+
+    set:
+      game.currentSet,
+
+    time:
+      Date.now()
+
+  };
+
+  game.actions.push(action);
+
+  game.scoreUs +=
+    usPoint;
+
+  game.scoreOpponent +=
+    opponentPoint;
+
+  saveData();
+
+  document.getElementById(
+    "lastAction"
+  ).textContent =
+    `${player.name} → ${actionLabel(currentCategory,type)}`;
+
+  selectedPlayerId = null;
+
+  backToCategories();
+
+  renderLive();
+
+}
+
+
+function actionLabel(category,type) {
+
+  const labels = {
+
+    kill:"Angriffspunkt",
+    playable:"Angriff spielbar",
+    error:"Fehler",
+    blocked:"Geblockt",
+
+    positive:"Annahme positiv",
+    neutral:"Annahme neutral",
+    negative:"Annahme negativ",
+
+    ace:"Aufschlag-Ass",
+    pressure:"Druckvoller Aufschlag",
+    normal:"Aufschlag im Spiel",
+
+    point:"Blockpunkt",
+    touch:"Block-Touch",
+
+    successful:"Abwehr erfolgreich"
+
+  };
+
+  return labels[type] || type;
+
+}
+
+
+/* =====================================================
+   MANUELLER PUNKT
+===================================================== */
+
+function manualScore(team, amount) {
+
+  const game =
+    currentGame();
+
+  if (!game) return;
+
+  if (team === "us") {
+
+    game.scoreUs =
+      Math.max(
+        0,
+        game.scoreUs + amount
+      );
+
+  } else {
+
+    game.scoreOpponent =
+      Math.max(
+        0,
+        game.scoreOpponent + amount
+      );
+
+  }
+
+  saveData();
+
+  renderLive();
+
+}
+
+
+/* =====================================================
+   UNDO
+===================================================== */
+
+function undoLastAction() {
+
+  const game =
+    currentGame();
+
+  if (!game || game.actions.length === 0) {
+
+    alert("Keine Aktion zum Rückgängigmachen.");
+
+    return;
+
+  }
+
+  const action =
+    game.actions.pop();
+
+  game.scoreUs -=
+    action.usPoint;
+
+  game.scoreOpponent -=
+    action.opponentPoint;
+
+  game.scoreUs =
+    Math.max(0,game.scoreUs);
+
+  game.scoreOpponent =
+    Math.max(0,game.scoreOpponent);
+
+  saveData();
+
+  document.getElementById(
+    "lastAction"
+  ).textContent =
+    "↩️ Letzte Aktion rückgängig gemacht";
+
+  renderLive();
+
+}
+
+
+/* =====================================================
+   SATZ BEENDEN
+===================================================== */
+
+function finishSet() {
+
+  const game =
+    currentGame();
+
+  if (!game) return;
+
+  if (
+    !confirm(
+      `Satz ${game.currentSet} mit ${game.scoreUs}:${game.scoreOpponent} beenden?`
+    )
+  ) return;
+
+  game.sets.push({
+
+    set:
+      game.currentSet,
+
+    us:
+      game.scoreUs,
+
+    opponent:
+      game.scoreOpponent
+
+  });
+
+  game.scoreUs = 0;
+
+  game.scoreOpponent = 0;
+
+  game.currentSet++;
+
+  if (game.currentSet > 5) {
+
+    game.currentSet = 5;
+
+  }
+
+  saveData();
+
+  renderLive();
+
+}
+
+
+/* =====================================================
+   SPIEL BEENDEN
+===================================================== */
+
+function finishGame() {
+
+  const game =
+    currentGame();
+
+  if (!game) return;
+
+  if (
+    !confirm(
+      "Spiel wirklich beenden?"
+    )
+  ) return;
+
+  game.finished = true;
+
+  saveData();
+
+  showPage("games");
+
+}
+
+
+/* =====================================================
+   EXPORT
+===================================================== */
+
+function exportAllData() {
+
+  const json =
+    JSON.stringify(
+      data,
+      null,
+      2
+    );
+
+  const blob =
+    new Blob(
+      [json],
+      {type:"application/json"}
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  link.href =
+    url;
+
+  link.download =
+    "VolleyStats-Daten.json";
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+
+/* =====================================================
+   IMPORT
+===================================================== */
+
+function importAllData(event) {
+
+  const file =
+    event.target.files[0];
+
+  if (!file) return;
+
+  const reader =
+    new FileReader();
+
+  reader.onload =
+    function(e) {
+
+      try {
+
+        const imported =
+          JSON.parse(e.target.result);
+
+        if (
+          !imported.roster ||
+          !imported.games
+        ) {
+
+          throw new Error();
+
+        }
+
+        if (
+          confirm(
+            "Die vorhandenen Daten durch die importierten Daten ersetzen?"
+          )
+        ) {
+
+          data =
+            imported;
+
+          saveData();
+
+          renderRoster();
+
+          renderGames();
+
+          alert("Daten erfolgreich importiert.");
+
+        }
+
+      } catch(e) {
+
+        alert("Die Datei konnte nicht gelesen werden.");
+
+      }
+
+    };
+
+  reader.readAsText(file);
+
+}
+
+
+/* =====================================================
+   SPIELER-AUSWAHL MODAL
+===================================================== */
+
+function openPlayerModal(
+  title,
+  players,
+  callback
+) {
+
+  document.getElementById(
+    "playerSelectTitle"
+  ).textContent =
+    title;
+
+  const container =
+    document.getElementById(
+      "playerSelectList"
+    );
+
+  container.innerHTML = "";
+
+  players.forEach(player => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "secondary-button";
+
+    button.innerHTML = `
+      ${escapeHTML(player.name)}
+      <br>
+      <small>
+        ${player.number || "–"} · ${player.position}
+      </small>
+    `;
+
+    button.onclick = () =>
+      callback(player);
+
+    container.appendChild(button);
+
+  });
+
+  document
+    .getElementById("playerSelectModal")
+    .classList.remove("hidden");
+
+}
+
+
+function closePlayerModal() {
+
+  document
+    .getElementById("playerSelectModal")
+    .classList.add("hidden");
+
+}
+
+
+/* =====================================================
+   HILFSFUNKTIONEN
+===================================================== */
+
+function formatDate(date) {
+
+  if (!date) return "";
+
+  const parts =
+    date.split("-");
+
+  if (parts.length !== 3) {
+    return date;
+  }
+
+  return `${parts[2]}.${parts[1]}.${parts[0]}`;
+
+}
+
+
+function escapeHTML(value) {
+
+  return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+renderGames();
+
+renderRoster();
+
+</script>
+
+</body>
+</html>
