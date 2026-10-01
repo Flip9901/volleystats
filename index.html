@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VolleyStats</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f2f4f7;
+  color: #111827;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 12px;
+}
+
+/* SPIELSTAND */
+
+.score-card {
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.match-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.team-name {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.score {
+  text-align: center;
+  font-size: 42px;
+  font-weight: 800;
+  margin: 4px 0;
+}
+
+.set-info {
+  text-align: center;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.score-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.score-buttons button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 15px;
+  font-size: 18px;
+  background: #e5e7eb;
+}
+
+/* SPIELER */
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 19px;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.player {
+  border: none;
+  border-radius: 13px;
+  background: #e5e7eb;
+  min-height: 62px;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: pre-line;
+}
+
+.player.selected {
+  background: #111827;
+  color: white;
+  transform: scale(1.03);
+}
+
+.selected-info {
+  text-align: center;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+/* AKTIONSKATEGORIEN */
+
+.category-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.category-button {
+  border: none;
+  border-radius: 14px;
+  padding: 18px 10px;
+  background: #e5e7eb;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.action-button {
+  border: none;
+  border-radius: 14px;
+  padding: 18px 8px;
+  background: #e5e7eb;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.action-button:active,
+.category-button:active,
+.player:active,
+.score-buttons button:active {
+  transform: scale(.96);
+}
+
+.back-button {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #e5e7eb;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none;
+}
+
+/* LETZTE AKTION */
+
+.last-action {
+  text-align: center;
+  font-weight: 700;
+  padding: 9px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  margin-top: 10px;
+}
+
+/* STATISTIK */
+
+.tabs {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  background: #e5e7eb;
+  font-weight: 700;
+}
+
+.tab.active {
+  background: #111827;
+  color: white;
+}
+
+.stats-wrapper {
+  overflow-x: auto;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.stats th,
+.stats td {
+  padding: 8px 5px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.stats th:first-child,
+.stats td:first-child {
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* ALLGEMEIN */
+
+input,
+select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  margin-top: 5px;
+  font-size: 16px;
+}
+
+.main-button {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  background: #111827;
+  color: white;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.danger {
+  background: #b91c1c;
+}
+
+@media (max-width: 600px) {
+  .players {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏐 VolleyStats</h1>
+</header>
+
+<div class="container">
+
+  <!-- SPIELSTAND -->
+
+  <div class="score-card">
+
+    <div class="match-info">
+      <div class="team-name">Wir</div>
+      <div id="opponentName" class="team-name">Gegner</div>
+    </div>
+
+    <div class="score">
+      <span id="scoreUs">0</span>
+      :
+      <span id="scoreOpponent">0</span>
+    </div>
+
+    <div class="set-info">
+      Satz <span id="setNumber">1</span>
+    </div>
+
+    <div class="score-buttons">
+      <button onclick="changeScore('us',1)">+1 Wir</button>
+      <button onclick="changeScore('us',-1)">−1 Wir</button>
+      <button onclick="changeScore('opponent',1)">+1 Gegner</button>
+      <button onclick="changeScore('opponent',-1)">−1 Gegner</button>
+    </div>
+
+  </div>
+
+
+  <!-- SPIELER AUSWÄHLEN -->
+
+  <div class="card">
+
+    <h2>Wer hatte die Aktion?</h2>
+
+    <div class="players" id="players"></div>
+
+    <div class="selected-info" id="selectedInfo">
+      Keine Spielerin ausgewählt
+    </div>
+
+  </div>
+
+
+  <!-- KATEGORIE -->
+
+  <div class="card" id="categoryCard">
+
+    <h2>Was ist passiert?</h2>
+
+    <div class="category-buttons">
+
+      <button
+        class="category-button"
+        onclick="openCategory('attack')">
+        🏐 Angriff
+      </button>
+
+      <button
+        class="category-button"
+        onclick="openCategory('reception')">
+        👐 Annahme
+      </button>
+
+      <button
+        class="category-button"
+        onclick="openCategory('serve')">
+        🎯 Aufschlag
+      </button>
+
+      <button
+        class="category-button"
+        onclick="openCategory('block')">
+        🧱 Block
+      </button>
+
+      <button
+        class="category-button"
+        onclick="openCategory('defense')">
+        🛡️ Abwehr
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- AKTION -->
+
+  <div class="card hidden" id="actionCard">
+
+    <button class="back-button" onclick="backToCategories()">
+      ← Zurück
+    </button>
+
+    <h2 id="actionTitle">Aktion</h2>
+
+    <div class="action-buttons" id="actionButtons"></div>
+
+  </div>
+
+
+  <!-- LETZTE AKTION -->
+
+  <div class="card">
+
+    <div id="lastAction" class="last-action">
+      Noch keine Aktion
+    </div>
+
+    <button class="main-button" onclick="undo()">
+      ↩️ Letzte Aktion rückgängig
+    </button>
+
+  </div>
+
+
+  <!-- STATISTIK -->
+
+  <div class="card">
+
+    <h2>📊 Statistik</h2>
+
+    <div class="tabs">
+
+      <button
+        id="tabMatch"
+        class="tab active"
+        onclick="showStats('match')">
+        Spiel
+      </button>
+
+      <button
+        id="tabPlayers"
+        class="tab"
+        onclick="showStats('players')">
+        Spieler
+      </button>
+
+    </div>
+
+    <div id="statsMatch">
+      <p>
+        Aktionen:
+        <strong id="totalActions">0</strong>
+      </p>
+
+      <p>
+        Angriffspunkte:
+        <strong id="attackPoints">0</strong>
+      </p>
+
+      <p>
+        Aufschlagasse:
+        <strong id="serveAces">0</strong>
+      </p>
+
+      <p>
+        Blockpunkte:
+        <strong id="blockPoints">0</strong>
+      </p>
+    </div>
+
+    <div id="statsPlayers" class="hidden">
+
+      <div class="stats-wrapper">
+
+        <table class="stats">
+
+          <thead>
+            <tr>
+              <th>Spielerin</th>
+              <th>Ang.</th>
+              <th>Pkt.</th>
+              <th>Fehler</th>
+              <th>Eff.</th>
+              <th>Annahme+</th>
+              <th>Asse</th>
+              <th>Block</th>
+            </tr>
+          </thead>
+
+          <tbody id="statsBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SPIELEINSTELLUNGEN -->
+
+  <div class="card">
+
+    <h2>⚙️ Spieleinstellungen</h2>
+
+    <label>Gegner</label>
+    <input
+      id="opponentInput"
+      placeholder="z. B. Dachau"
+      onchange="saveSettings()">
+
+    <label style="display:block;margin-top:10px;">
+      Satz
+    </label>
+
+    <select id="setInput" onchange="saveSettings()">
+
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+
+    </select>
+
+  </div>
+
+
+  <!-- SPIELER BEARBEITEN -->
+
+  <div class="card">
+
+    <h2>👥 Spielerinnen</h2>
+
+    <div id="roster"></div>
+
+    <button
+      class="main-button"
+      onclick="saveRoster()">
+      💾 Namen speichern
+    </button>
+
+  </div>
+
+
+  <!-- DATEN -->
+
+  <div class="card">
+
+    <h2>💾 Daten</h2>
+
+    <button
+      class="main-button"
+      onclick="exportData()">
+      📤 Spiel sichern
+    </button>
+
+    <button
+      class="main-button danger"
+      onclick="newMatch()">
+      🗑️ Neues Spiel
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   GRUNDDATEN
+========================= */
+
+const defaultPlayers = [
+
+  {number:1,name:"Spieler 1"},
+  {number:2,name:"Spieler 2"},
+  {number:3,name:"Spieler 3"},
+  {number:4,name:"Spieler 4"},
+  {number:5,name:"Spieler 5"},
+  {number:6,name:"Spieler 6"},
+  {number:7,name:"Spieler 7"},
+  {number:8,name:"Spieler 8"},
+  {number:9,name:"Spieler 9"},
+  {number:10,name:"Spieler 10"},
+  {number:11,name:"Spieler 11"},
+  {number:12,name:"Spieler 12"}
+
+];
+
+let players =
+  JSON.parse(localStorage.getItem("volleyPlayers"))
+  || defaultPlayers;
+
+let actions =
+  JSON.parse(localStorage.getItem("volleyActions"))
+  || [];
+
+let scoreUs =
+  Number(localStorage.getItem("scoreUs")) || 0;
+
+let scoreOpponent =
+  Number(localStorage.getItem("scoreOpponent")) || 0;
+
+let selectedPlayer = null;
+
+let currentCategory = null;
+
+
+/* =========================
+   AKTIONEN
+========================= */
+
+const actionOptions = {
+
+  attack: [
+
+    {
+      type:"kill",
+      label:"🟢 Punkt",
+      usPoint:1
+    },
+
+    {
+      type:"playable",
+      label:"🟡 Spielbar",
+      usPoint:0
+    },
+
+    {
+      type:"error",
+      label:"🔴 Fehler",
+      opponentPoint:1
+    },
+
+    {
+      type:"blocked",
+      label:"⛔ Geblockt",
+      opponentPoint:1
+    }
+
+  ],
+
+  reception: [
+
+    {
+      type:"positive",
+      label:"🟢 ++ / Positiv"
+    },
+
+    {
+      type:"neutral",
+      label:"🟡 + / Neutral"
+    },
+
+    {
+      type:"negative",
+      label:"🟠 - / Negativ"
+    },
+
+    {
+      type:"error",
+      label:"🔴 Fehler / Ass",
+      opponentPoint:1
+    }
+
+  ],
+
+  serve: [
+
+    {
+      type:"ace",
+      label:"🟢 ASS",
+      usPoint:1
+    },
+
+    {
+      type:"pressure",
+      label:"🟢 Druckvoll"
+    },
+
+    {
+      type:"normal",
+      label:"⚪ Im Spiel"
+    },
+
+    {
+      type:"error",
+      label:"🔴 Aufschlagfehler",
+      opponentPoint:1
+    }
+
+  ],
+
+  block: [
+
+    {
+      type:"point",
+      label:"🟢 Blockpunkt",
+      usPoint:1
+    },
+
+    {
+      type:"touch",
+      label:"🟡 Touch"
+    },
+
+    {
+      type:"error",
+      label:"🔴 Blockfehler",
+      opponentPoint:1
+    }
+
+  ],
+
+  defense: [
+
+    {
+      type:"successful",
+      label:"🟢 Erfolgreich"
+    },
+
+    {
+      type:"error",
+      label:"🔴 Fehler",
+      opponentPoint:1
+    }
+
+  ]
+
+};
+
+
+/* =========================
+   SPEICHERN
+========================= */
+
+function saveAll() {
+
+  localStorage.setItem(
+    "volleyPlayers",
+    JSON.stringify(players)
+  );
+
+  localStorage.setItem(
+    "volleyActions",
+    JSON.stringify(actions)
+  );
+
+  localStorage.setItem(
+    "scoreUs",
+    scoreUs
+  );
+
+  localStorage.setItem(
+    "scoreOpponent",
+    scoreOpponent
+  );
+
+}
+
+
+/* =========================
+   SPIELER
+========================= */
+
+function renderPlayers() {
+
+  const container =
+    document.getElementById("players");
+
+  container.innerHTML = "";
+
+  players.forEach(player => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "player" +
+      (
+        selectedPlayer === player.number
+          ? " selected"
+          : ""
+      );
+
+    button.textContent =
+      "#" + player.number +
+      "\n" +
+      player.name;
+
+    button.onclick = () => {
+
+      selectedPlayer =
+        player.number;
+
+      document.getElementById(
+        "selectedInfo"
+      ).textContent =
+        "#" + player.number +
+        " " +
+        player.name +
+        " ausgewählt";
+
+      renderPlayers();
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+/* =========================
+   KATEGORIE ÖFFNEN
+========================= */
+
+function openCategory(category) {
+
+  if (!selectedPlayer) {
+
+    document.getElementById(
+      "selectedInfo"
+    ).textContent =
+      "⚠️ Erst Spielerin auswählen";
+
+    return;
+  }
+
+  currentCategory = category;
+
+  document.getElementById(
+    "categoryCard"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "actionCard"
+  ).classList.remove("hidden");
+
+  const titles = {
+
+    attack:"🏐 Angriff",
+
+    reception:"👐 Annahme",
+
+    serve:"🎯 Aufschlag",
+
+    block:"🧱 Block",
+
+    defense:"🛡️ Abwehr"
+
+  };
+
+  document.getElementById(
+    "actionTitle"
+  ).textContent =
+    titles[category];
+
+  renderActions();
+
+}
+
+
+/* =========================
+   AKTIONEN ANZEIGEN
+========================= */
+
+function renderActions() {
+
+  const container =
+    document.getElementById(
+      "actionButtons"
+    );
+
+  container.innerHTML = "";
+
+  actionOptions[
+    currentCategory
+  ].forEach(option => {
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "action-button";
+
+    button.textContent =
+      option.label;
+
+    button.onclick = () => {
+
+      recordAction(
+        currentCategory,
+        option
+      );
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+/* =========================
+   AKTION SPEICHERN
+========================= */
+
+function recordAction(
+  category,
+  option
+) {
+
+  if (!selectedPlayer) return;
+
+  const player =
+    players.find(
+      p => p.number === selectedPlayer
+    );
+
+  const action = {
+
+    player:selectedPlayer,
+
+    category:category,
+
+    type:option.type,
+
+    usPoint:option.usPoint || 0,
+
+    opponentPoint:
+      option.opponentPoint || 0,
+
+    time:Date.now()
+
+  };
+
+  actions.push(action);
+
+
+  /* AUTOMATISCHER PUNKT */
+
+  if (option.usPoint) {
+
+    scoreUs += option.usPoint;
+
+  }
+
+  if (option.opponentPoint) {
+
+    scoreOpponent +=
+      option.opponentPoint;
+
+  }
+
+
+  saveAll();
+
+  updateScore();
+
+  renderStats();
+
+
+  /* LETZTE AKTION */
+
+  document.getElementById(
+    "lastAction"
+  ).textContent =
+
+    "#" +
+    player.number +
+    " " +
+    player.name +
+    " → " +
+    option.label.replace(
+      /🟢|🟡|🟠|🔴|⛔/g,
+      ""
+    ) +
+    (
+      option.usPoint
+        ? "  |  +1 Punkt für uns"
+        : ""
+    ) +
+    (
+      option.opponentPoint
+        ? "  |  +1 Punkt Gegner"
+        : ""
+    );
+
+
+  /* ZURÜCK ZUR HAUPTANSICHT */
+
+  backToCategories();
+
+}
+
+
+/* =========================
+   ZURÜCK
+========================= */
+
+function backToCategories() {
+
+  document.getElementById(
+    "actionCard"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "categoryCard"
+  ).classList.remove("hidden");
+
+}
+
+
+/* =========================
+   SPIELSTAND
+========================= */
+
+function updateScore() {
+
+  document.getElementById(
+    "scoreUs"
+  ).textContent =
+    scoreUs;
+
+  document.getElementById(
+    "scoreOpponent"
+  ).textContent =
+    scoreOpponent;
+
+}
+
+
+function changeScore(
+  team,
+  amount
+) {
+
+  if (team === "us") {
+
+    scoreUs =
+      Math.max(
+        0,
+        scoreUs + amount
+      );
+
+  }
+
+  if (team === "opponent") {
+
+    scoreOpponent =
+      Math.max(
+        0,
+        scoreOpponent + amount
+      );
+
+  }
+
+  saveAll();
+
+  updateScore();
+
+}
+
+
+/* =========================
+   RÜCKGÄNGIG
+========================= */
+
+function undo() {
+
+  if (actions.length === 0) {
+
+    document.getElementById(
+      "lastAction"
+    ).textContent =
+      "Keine Aktion zum Rückgängigmachen";
+
+    return;
+
+  }
+
+  const action =
+    actions.pop();
+
+
+  if (action.usPoint) {
+
+    scoreUs =
+      Math.max(
+        0,
+        scoreUs - action.usPoint
+      );
+
+  }
+
+  if (action.opponentPoint) {
+
+    scoreOpponent =
+      Math.max(
+        0,
+        scoreOpponent -
+        action.opponentPoint
+      );
+
+  }
+
+  saveAll();
+
+  updateScore();
+
+  renderStats();
+
+  document.getElementById(
+    "lastAction"
+  ).textContent =
+    "↩️ Letzte Aktion rückgängig gemacht";
+
+}
+
+
+/* =========================
+   STATISTIK
+========================= */
+
+function renderStats() {
+
+  const total =
+    actions.length;
+
+  const attackPoints =
+    actions.filter(
+      a =>
+        a.category === "attack" &&
+        a.type === "kill"
+    ).length;
+
+  const serveAces =
+    actions.filter(
+      a =>
+        a.category === "serve" &&
+        a.type === "ace"
+    ).length;
+
+  const blockPoints =
+    actions.filter(
+      a =>
+        a.category === "block" &&
+        a.type === "point"
+    ).length;
+
+
+  document.getElementById(
+    "totalActions"
+  ).textContent =
+    total;
+
+  document.getElementById(
+    "attackPoints"
+  ).textContent =
+    attackPoints;
+
+  document.getElementById(
+    "serveAces"
+  ).textContent =
+    serveAces;
+
+  document.getElementById(
+    "blockPoints"
+  ).textContent =
+    blockPoints;
+
+
+  const tbody =
+    document.getElementById(
+      "statsBody"
+    );
+
+  tbody.innerHTML = "";
+
+
+  players.forEach(player => {
+
+    const attacks =
+      actions.filter(
+        a =>
+          a.player === player.number &&
+          a.category === "attack"
+      );
+
+    const kills =
+      attacks.filter(
+        a => a.type === "kill"
+      ).length;
+
+    const attackErrors =
+      attacks.filter(
+        a =>
+          a.type === "error" ||
+          a.type === "blocked"
+      ).length;
+
+    const attackCount =
+      attacks.length;
+
+    let efficiency = 0;
+
+    if (attackCount > 0) {
+
+      efficiency =
+        Math.round(
+          (
+            kills -
+            attackErrors
+          ) /
+          attackCount *
+          100
+        );
+
+    }
+
+
+    const receptions =
+      actions.filter(
+        a =>
+          a.player === player.number &&
+          a.category === "reception"
+      );
+
+    const positive =
+      receptions.filter(
+        a =>
+          a.type === "positive"
+      ).length;
+
+    const positiveRate =
+      receptions.length
+        ? Math.round(
+            positive /
+            receptions.length *
+            100
+          )
+        : 0;
+
+
+    const aces =
+      actions.filter(
+        a =>
+          a.player === player.number &&
+          a.category === "serve" &&
+          a.type === "ace"
+      ).length;
+
+
+    const blocks =
+      actions.filter(
+        a =>
+          a.player === player.number &&
+          a.category === "block" &&
+          a.type === "point"
+      ).length;
+
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>
+        #${player.number}
+        ${player.name}
+      </td>
+
+      <td>${attackCount}</td>
+
+      <td>${kills}</td>
+
+      <td>${attackErrors}</td>
+
+      <td>${efficiency}%</td>
+
+      <td>${positiveRate}%</td>
+
+      <td>${aces}</td>
+
+      <td>${blocks}</td>
+
+    `;
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================
+   STATISTIK TABS
+========================= */
+
+function showStats(type) {
+
+  const match =
+    document.getElementById(
+      "statsMatch"
+    );
+
+  const playersStats =
+    document.getElementById(
+      "statsPlayers"
+    );
+
+  const tabMatch =
+    document.getElementById(
+      "tabMatch"
+    );
+
+  const tabPlayers =
+    document.getElementById(
+      "tabPlayers"
+    );
+
+
+  if (type === "match") {
+
+    match.classList.remove(
+      "hidden"
+    );
+
+    playersStats.classList.add(
+      "hidden"
+    );
+
+    tabMatch.classList.add(
+      "active"
+    );
+
+    tabPlayers.classList.remove(
+      "active"
+    );
+
+  } else {
+
+    match.classList.add(
+      "hidden"
+    );
+
+    playersStats.classList.remove(
+      "hidden"
+    );
+
+    tabMatch.classList.remove(
+      "active"
+    );
+
+    tabPlayers.classList.add(
+      "active"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   SPIELER NAMEN
+========================= */
+
+function renderRoster() {
+
+  const container =
+    document.getElementById(
+      "roster"
+    );
+
+  container.innerHTML = "";
+
+  players.forEach(player => {
+
+    const input =
+      document.createElement(
+        "input"
+      );
+
+    input.value =
+      player.name;
+
+    input.dataset.number =
+      player.number;
+
+    input.placeholder =
+      "Spieler " +
+      player.number;
+
+    input.style.marginBottom =
+      "7px";
+
+    container.appendChild(
+      input
+    );
+
+  });
+
+}
+
+
+function saveRoster() {
+
+  const inputs =
+    document.querySelectorAll(
+      "#roster input"
+    );
+
+  inputs.forEach(input => {
+
+    const number =
+      Number(
+        input.dataset.number
+      );
+
+    const player =
+      players.find(
+        p =>
+          p.number === number
+      );
+
+    player.name =
+      input.value.trim() ||
+      "Spieler " + number;
+
+  });
+
+  saveAll();
+
+  renderPlayers();
+
+  renderStats();
+
+  document.getElementById(
+    "selectedInfo"
+  ).textContent =
+    "✓ Namen gespeichert";
+
+}
+
+
+/* =========================
+   EINSTELLUNGEN
+========================= */
+
+function saveSettings() {
+
+  const opponent =
+    document.getElementById(
+      "opponentInput"
+    ).value;
+
+  const set =
+    document.getElementById(
+      "setInput"
+    ).value;
+
+
+  localStorage.setItem(
+    "opponent",
+    opponent
+  );
+
+  localStorage.setItem(
+    "setNumber",
+    set
+  );
+
+
+  document.getElementById(
+    "opponentName"
+  ).textContent =
+    opponent ||
+    "Gegner";
+
+  document.getElementById(
+    "setNumber"
+  ).textContent =
+    set;
+
+}
+
+
+/* =========================
+   SPIEL EXPORTIEREN
+========================= */
+
+function exportData() {
+
+  const data = {
+
+    opponent:
+      document.getElementById(
+        "opponentInput"
+      ).value,
+
+    set:
+      document.getElementById(
+        "setInput"
+      ).value,
+
+    scoreUs:scoreUs,
+
+    scoreOpponent:
+      scoreOpponent,
+
+    players:players,
+
+    actions:actions
+
+  };
+
+
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  link.href = url;
+
+  link.download =
+    "VolleyStats-Spiel.json";
+
+  link.click();
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+/* =========================
+   NEUES SPIEL
+========================= */
+
+function newMatch() {
+
+  const confirmNew =
+    confirm(
+      "Wirklich ein neues Spiel starten? Die aktuelle Statistik wird gelöscht."
+    );
+
+  if (!confirmNew) return;
+
+
+  actions = [];
+
+  scoreUs = 0;
+
+  scoreOpponent = 0;
+
+  selectedPlayer = null;
+
+
+  saveAll();
+
+  updateScore();
+
+  renderStats();
+
+  renderPlayers();
+
+
+  document.getElementById(
+    "selectedInfo"
+  ).textContent =
+    "Keine Spielerin ausgewählt";
+
+  document.getElementById(
+    "lastAction"
+  ).textContent =
+    "Neues Spiel gestartet";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+const savedOpponent =
+  localStorage.getItem(
+    "opponent"
+  ) || "";
+
+const savedSet =
+  localStorage.getItem(
+    "setNumber"
+  ) || "1";
+
+
+document.getElementById(
+  "opponentInput"
+).value =
+  savedOpponent;
+
+
+document.getElementById(
+  "setInput"
+).value =
+  savedSet;
+
+
+document.getElementById(
+  "opponentName"
+).textContent =
+  savedOpponent ||
+  "Gegner";
+
+
+document.getElementById(
+  "setNumber"
+).textContent =
+  savedSet;
+
+
+renderPlayers();
+
+renderStats();
+
+renderRoster();
+
+updateScore();
+
+</script>
+
+</body>
+</html>
