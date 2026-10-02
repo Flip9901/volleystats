@@ -1,0 +1,2451 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VolleyStats</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f6f8;
+    color: #17202a;
+}
+
+header {
+    background: #111827;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+nav {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+nav button {
+    flex: 1;
+    border: none;
+    background: white;
+    padding: 13px 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+nav button.active {
+    color: #2563eb;
+    font-weight: 700;
+    border-bottom: 3px solid #2563eb;
+}
+
+main {
+    max-width: 1000px;
+    margin: auto;
+    padding: 16px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+button {
+    font-family: inherit;
+}
+
+.primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.secondary {
+    background: #e5e7eb;
+    color: #111827;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+h3 {
+    margin-bottom: 8px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.game-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 10px;
+}
+
+.game-info {
+    flex: 1;
+}
+
+.game-info strong {
+    display: block;
+    font-size: 17px;
+}
+
+.small {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.live-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.score-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin: 15px 0;
+}
+
+.score-box {
+    text-align: center;
+    min-width: 100px;
+}
+
+.score {
+    font-size: 54px;
+    font-weight: 800;
+}
+
+.score-name {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.set-score {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2563eb;
+    white-space: nowrap;
+}
+
+.score-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.score-buttons button {
+    width: 45px;
+    height: 40px;
+    border: none;
+    border-radius: 9px;
+    background: #e5e7eb;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.court-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.court {
+    width: min(100%, 620px);
+    aspect-ratio: 1.45;
+    background: #dbeafe;
+    border: 4px solid #1e3a8a;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    padding: 5px;
+}
+
+.position {
+    background: white;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    padding: 5px;
+    min-width: 0;
+}
+
+.position:hover {
+    background: #f8fafc;
+}
+
+.position.selected {
+    border: 4px solid #2563eb;
+    background: #eff6ff;
+}
+
+.position-number {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.position-name {
+    font-weight: 700;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.position-number-player {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.bench {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.bench-player {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+}
+
+.bench-player.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+.substitution-hint {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    color: #1d4ed8;
+    padding: 10px;
+    border-radius: 9px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.category-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.category-buttons button {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 5px;
+    background: #e5e7eb;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.category-buttons button.active {
+    background: #2563eb;
+    color: white;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+}
+
+.action-buttons button {
+    border: none;
+    border-radius: 10px;
+    padding: 14px 8px;
+    background: #f1f5f9;
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 55px;
+}
+
+.action-buttons button:hover {
+    background: #e2e8f0;
+}
+
+.player-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 14px;
+}
+
+.player-chip {
+    border: 2px solid #d1d5db;
+    background: white;
+    border-radius: 9px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.player-chip.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.live-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.live-controls button {
+    flex: 1;
+    min-width: 130px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th,
+td {
+    padding: 9px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 14px;
+}
+
+th {
+    background: #f8fafc;
+}
+
+.player-form {
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr auto;
+    gap: 8px;
+    align-items: end;
+}
+
+.roster-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 11px 0;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+}
+
+.stat-card {
+    background: #f8fafc;
+    border-radius: 11px;
+    padding: 13px;
+}
+
+.stat-title {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    margin-top: 3px;
+}
+
+.stat-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+details {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+summary {
+    cursor: pointer;
+    padding: 14px;
+    font-weight: 700;
+}
+
+.details-content {
+    padding: 0 14px 14px;
+}
+
+.empty {
+    color: #6b7280;
+    text-align: center;
+    padding: 30px 10px;
+}
+
+.modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 15px;
+}
+
+.modal-bg.show {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    width: min(500px, 100%);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+@media (max-width: 700px) {
+    .category-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .player-form {
+        grid-template-columns: 1fr 80px;
+    }
+
+    .player-form select,
+    .player-form button {
+        grid-column: span 2;
+    }
+
+    .score {
+        font-size: 44px;
+    }
+
+    .court {
+        aspect-ratio: 1.2;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>🏐 VolleyStats</header>
+
+<nav>
+    <button class="nav-btn active" onclick="showPage('games')">Spiele</button>
+    <button class="nav-btn" onclick="showPage('live')">Live</button>
+    <button class="nav-btn" onclick="showPage('roster')">Kader</button>
+    <button class="nav-btn" onclick="showPage('analysis')">Analyse</button>
+</nav>
+
+<main>
+
+<!-- SPIELE -->
+<section id="games" class="page active">
+    <div class="card">
+        <div class="live-header">
+            <div>
+                <h2>Spiele</h2>
+                <div class="small">Deine gespeicherten Spiele</div>
+            </div>
+            <button class="primary" onclick="openNewGame()">+ Neues Spiel</button>
+        </div>
+    </div>
+
+    <div id="gamesList"></div>
+</section>
+
+
+<!-- LIVE -->
+<section id="live" class="page">
+
+    <div id="noLiveGame" class="card empty">
+        Kein Spiel ausgewählt.
+        <br><br>
+        <button class="primary" onclick="showPage('games')">
+            Zu den Spielen
+        </button>
+    </div>
+
+    <div id="liveContent" style="display:none;">
+
+        <div class="card">
+
+            <div class="live-header">
+                <div>
+                    <h2 id="liveOpponent">Gegner</h2>
+                    <div class="small" id="liveDate"></div>
+                </div>
+
+                <div>
+                    <strong id="liveSetNumber">Satz 1</strong>
+                </div>
+            </div>
+
+            <div class="score-area">
+
+                <div class="score-box">
+                    <div class="score" id="scoreUs">0</div>
+                    <div class="score-name">Wir</div>
+
+                    <div class="score-buttons">
+                        <button onclick="changeScore('us',-1)">−</button>
+                        <button onclick="changeScore('us',1)">+</button>
+                    </div>
+                </div>
+
+                <div class="set-score" id="liveSetScore">
+                    Sätze 0 : 0
+                </div>
+
+                <div class="score-box">
+                    <div class="score" id="scoreOpponent">0</div>
+                    <div class="score-name">Gegner</div>
+
+                    <div class="score-buttons">
+                        <button onclick="changeScore('opponent',-1)">−</button>
+                        <button onclick="changeScore('opponent',1)">+</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="small" style="text-align:center;">
+                Aktueller Satz
+            </div>
+
+            <div class="live-controls">
+                <button class="secondary" onclick="undoLastAction()">
+                    ↩ Letzte Aktion rückgängig
+                </button>
+
+                <button class="secondary" onclick="finishSet()">
+                    Satz beenden
+                </button>
+
+                <button class="danger" onclick="finishGame()">
+                    Spiel beenden
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- AUFSTELLUNG -->
+        <div class="card">
+
+            <h3>Aufstellung</h3>
+
+            <div class="small">
+                Spielerin antippen und danach eine Bankspielerin auswählen,
+                um direkt zu wechseln.
+            </div>
+
+            <div class="court-wrapper">
+                <div class="court" id="court"></div>
+            </div>
+
+            <div id="substitutionHint"></div>
+
+            <h3>Bank</h3>
+
+            <div class="bench" id="bench"></div>
+
+        </div>
+
+
+        <!-- AKTIONEN -->
+        <div class="card">
+
+            <h3>Spielerin für Aktion auswählen</h3>
+
+            <div class="player-selection" id="actionPlayers"></div>
+
+            <h3>Aktion</h3>
+
+            <div class="category-buttons">
+
+                <button onclick="selectCategory('attack')">
+                    Angriff
+                </button>
+
+                <button onclick="selectCategory('reception')">
+                    Annahme
+                </button>
+
+                <button onclick="selectCategory('serve')">
+                    Aufschlag
+                </button>
+
+                <button onclick="selectCategory('block')">
+                    Block
+                </button>
+
+                <button onclick="selectCategory('defense')">
+                    Abwehr
+                </button>
+
+            </div>
+
+            <div id="actionButtons" class="action-buttons"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- KADER -->
+<section id="roster" class="page">
+
+    <div class="card">
+        <h2>Kader</h2>
+
+        <div class="player-form">
+
+            <div>
+                <label>Name</label>
+                <input id="playerName" placeholder="z. B. Anna">
+            </div>
+
+            <div>
+                <label>Nr.</label>
+                <input id="playerNumber" type="number" placeholder="7">
+            </div>
+
+            <div>
+                <label>Position</label>
+                <select id="playerPosition">
+                    <option>Außen</option>
+                    <option>Diagonal</option>
+                    <option>Zuspiel</option>
+                    <option>Mitte</option>
+                    <option>Libera</option>
+                    <option>Universal</option>
+                </select>
+            </div>
+
+            <button class="primary" onclick="addPlayer()">
+                Hinzufügen
+            </button>
+
+        </div>
+    </div>
+
+    <div class="card">
+        <div id="rosterList"></div>
+    </div>
+
+</section>
+
+
+<!-- ANALYSE -->
+<section id="analysis" class="page">
+
+    <div id="analysisContent"></div>
+
+</section>
+
+</main>
+
+
+<!-- NEUES SPIEL MODAL -->
+<div class="modal-bg" id="newGameModal">
+
+    <div class="modal">
+
+        <h2>Neues Spiel</h2>
+
+        <label>Gegner</label>
+        <input id="newOpponent" placeholder="z. B. SV Musterstadt">
+
+        <label>Datum</label>
+        <input id="newDate" type="date">
+
+        <div class="modal-buttons">
+            <button class="secondary" onclick="closeNewGame()">
+                Abbrechen
+            </button>
+
+            <button class="primary" onclick="createGame()">
+                Spiel erstellen
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const STORAGE_KEY = "volleystats_v2";
+
+let data = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || '{"players":[],"games":[]}'
+);
+
+let currentGameId = null;
+
+let selectedPlayerId = null;
+let selectedCategory = null;
+
+let substitutionPosition = null;
+
+
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showPage(page) {
+
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+
+    document.getElementById(page).classList.add("active");
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    const index = {
+        games: 0,
+        live: 1,
+        roster: 2,
+        analysis: 3
+    }[page];
+
+    document.querySelectorAll(".nav-btn")[index].classList.add("active");
+
+    if (page === "games") renderGames();
+    if (page === "roster") renderRoster();
+    if (page === "analysis") renderAnalysis();
+    if (page === "live") renderLive();
+}
+
+
+/* =========================
+   SPIELE
+========================= */
+
+function openNewGame() {
+
+    document.getElementById("newOpponent").value = "";
+
+    document.getElementById("newDate").value =
+        new Date().toISOString().split("T")[0];
+
+    document.getElementById("newGameModal").classList.add("show");
+}
+
+
+function closeNewGame() {
+    document.getElementById("newGameModal").classList.remove("show");
+}
+
+
+function createGame() {
+
+    const opponent =
+        document.getElementById("newOpponent").value.trim();
+
+    const date =
+        document.getElementById("newDate").value;
+
+    if (!opponent) {
+        alert("Bitte einen Gegner eingeben.");
+        return;
+    }
+
+    const game = {
+
+        id: Date.now(),
+
+        opponent,
+
+        date,
+
+        currentSet: 1,
+
+        scoreUs: 0,
+
+        scoreOpponent: 0,
+
+        sets: [],
+
+        actions: [],
+
+        substitutions: [],
+
+        lineup: {
+            1: null,
+            2: null,
+            3: null,
+            4: null,
+            5: null,
+            6: null
+        },
+
+        finished: false
+    };
+
+    setupLineup(game);
+
+    data.games.unshift(game);
+
+    currentGameId = game.id;
+
+    saveData();
+
+    closeNewGame();
+
+    showPage("live");
+}
+
+
+function renderGames() {
+
+    const container =
+        document.getElementById("gamesList");
+
+    if (!data.games.length) {
+
+        container.innerHTML = `
+            <div class="card empty">
+                Noch keine Spiele vorhanden.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = data.games.map(game => {
+
+        const setScore = getSetScore(game);
+
+        const setsText = game.sets.length
+            ? game.sets.map(s => `${s.us}:${s.opponent}`).join(" · ")
+            : "Noch keine Sätze";
+
+        return `
+            <div class="card game-item">
+
+                <div class="game-info">
+
+                    <strong>
+                        ${escapeHtml(game.opponent)}
+                    </strong>
+
+                    <div class="small">
+                        ${formatDate(game.date)}
+                    </div>
+
+                    <div style="margin-top:5px;">
+                        <strong>
+                            ${setScore.us} : ${setScore.opponent}
+                        </strong>
+                        <span class="small">
+                            Sätze
+                        </span>
+                    </div>
+
+                    <div class="small">
+                        ${setsText}
+                    </div>
+
+                </div>
+
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+
+                    <button class="primary"
+                        onclick="openGame(${game.id})">
+                        ${game.finished ? "Analyse" : "Öffnen"}
+                    </button>
+
+                    <button class="danger"
+                        onclick="deleteGame(${game.id})">
+                        Löschen
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+
+function openGame(id) {
+
+    currentGameId = id;
+
+    const game = getCurrentGame();
+
+    if (game.finished) {
+        showPage("analysis");
+    } else {
+        showPage("live");
+    }
+}
+
+
+function deleteGame(id) {
+
+    if (!confirm("Spiel wirklich löschen?")) return;
+
+    data.games =
+        data.games.filter(g => g.id !== id);
+
+    if (currentGameId === id) {
+        currentGameId = null;
+    }
+
+    saveData();
+
+    renderGames();
+}
+
+
+/* =========================
+   KADER
+========================= */
+
+function addPlayer() {
+
+    const name =
+        document.getElementById("playerName").value.trim();
+
+    const number =
+        document.getElementById("playerNumber").value;
+
+    const position =
+        document.getElementById("playerPosition").value;
+
+    if (!name) {
+        alert("Bitte einen Namen eingeben.");
+        return;
+    }
+
+    const player = {
+
+        id: Date.now(),
+
+        name,
+
+        number: number || "",
+
+        position
+
+    };
+
+    data.players.push(player);
+
+    saveData();
+
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerNumber").value = "";
+
+    renderRoster();
+}
+
+
+function renderRoster() {
+
+    const container =
+        document.getElementById("rosterList");
+
+    if (!data.players.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                Noch keine Spielerinnen angelegt.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.players.map(player => `
+
+            <div class="roster-item">
+
+                <div>
+
+                    <strong>
+                        ${escapeHtml(player.name)}
+                    </strong>
+
+                    <div class="small">
+                        ${player.number ? "#" + player.number + " · " : ""}
+                        ${escapeHtml(player.position)}
+                    </div>
+
+                </div>
+
+                <button class="danger"
+                    onclick="deletePlayer(${player.id})">
+                    Löschen
+                </button>
+
+            </div>
+
+        `).join("");
+}
+
+
+function deletePlayer(id) {
+
+    if (!confirm("Spielerin wirklich löschen?")) return;
+
+    data.players =
+        data.players.filter(p => p.id !== id);
+
+    saveData();
+
+    renderRoster();
+}
+
+
+/* =========================
+   AUFSTELLUNG
+========================= */
+
+function setupLineup(game) {
+
+    const used = new Set();
+
+    for (let pos = 1; pos <= 6; pos++) {
+
+        if (game.lineup[pos]) {
+            used.add(game.lineup[pos]);
+        }
+    }
+
+    const available =
+        data.players.filter(p => !used.has(p.id));
+
+    for (let pos = 1; pos <= 6; pos++) {
+
+        if (!game.lineup[pos] && available.length) {
+
+            const player = available.shift();
+
+            game.lineup[pos] = player.id;
+
+        }
+    }
+}
+
+
+function getPlayer(id) {
+    return data.players.find(p => p.id === id);
+}
+
+
+function getCurrentGame() {
+    return data.games.find(g => g.id === currentGameId);
+}
+
+
+function selectPosition(position) {
+
+    const game = getCurrentGame();
+
+    if (!game || game.finished) return;
+
+    substitutionPosition = position;
+
+    selectedPlayerId = null;
+
+    renderLive();
+}
+
+
+function choosePositionForPlayer(playerId) {
+
+    const game = getCurrentGame();
+
+    if (!game || game.finished) return;
+
+    if (!substitutionPosition) {
+
+        alert(
+            "Tippe zuerst auf eine Spielerin auf dem Feld, die ausgewechselt werden soll."
+        );
+
+        return;
+    }
+
+    const position = substitutionPosition;
+
+    const oldPlayerId = game.lineup[position];
+
+    if (oldPlayerId === playerId) {
+        substitutionPosition = null;
+        renderLive();
+        return;
+    }
+
+    /* Prüfen, ob Spielerin bereits auf dem Feld steht */
+    let playerPosition = null;
+
+    for (let pos = 1; pos <= 6; pos++) {
+
+        if (game.lineup[pos] === playerId) {
+            playerPosition = pos;
+            break;
+        }
+    }
+
+    /*
+       Falls die ausgewählte Spielerin bereits auf dem Feld steht,
+       wird ihre Position mit der bisherigen Position getauscht.
+    */
+    if (playerPosition !== null) {
+
+        game.lineup[playerPosition] = oldPlayerId;
+        game.lineup[position] = playerId;
+
+    } else {
+
+        game.lineup[position] = playerId;
+    }
+
+    game.substitutions.push({
+
+        set: game.currentSet,
+
+        position,
+
+        inPlayerId: playerId,
+
+        outPlayerId: oldPlayerId,
+
+        time: new Date().toISOString()
+
+    });
+
+    substitutionPosition = null;
+
+    saveData();
+
+    renderLive();
+}
+
+
+/* =========================
+   LIVE
+========================= */
+
+function renderLive() {
+
+    const game = getCurrentGame();
+
+    const noGame =
+        document.getElementById("noLiveGame");
+
+    const content =
+        document.getElementById("liveContent");
+
+    if (!game) {
+
+        noGame.style.display = "block";
+        content.style.display = "none";
+
+        return;
+    }
+
+    noGame.style.display = "none";
+    content.style.display = "block";
+
+    document.getElementById("liveOpponent").textContent =
+        game.opponent;
+
+    document.getElementById("liveDate").textContent =
+        formatDate(game.date);
+
+    document.getElementById("liveSetNumber").textContent =
+        `Satz ${game.currentSet}`;
+
+    document.getElementById("scoreUs").textContent =
+        game.scoreUs;
+
+    document.getElementById("scoreOpponent").textContent =
+        game.scoreOpponent;
+
+    const setScore = getSetScore(game);
+
+    document.getElementById("liveSetScore").textContent =
+        `Sätze ${setScore.us} : ${setScore.opponent}`;
+
+    renderCourt(game);
+
+    renderActionPlayers(game);
+
+    renderActions();
+
+    renderSubstitutionHint();
+}
+
+
+function renderCourt(game) {
+
+    const court =
+        document.getElementById("court");
+
+    const positions = [4,3,2,5,6,1];
+
+    court.innerHTML =
+        positions.map(pos => {
+
+            const player =
+                getPlayer(game.lineup[pos]);
+
+            const selected =
+                substitutionPosition === pos
+                    ? "selected"
+                    : "";
+
+            return `
+
+                <div class="position ${selected}"
+                     onclick="selectPosition(${pos})">
+
+                    <div class="position-number">
+                        Position ${pos}
+                    </div>
+
+                    ${
+                        player
+                        ? `
+                            <div class="position-name">
+                                ${escapeHtml(player.name)}
+                            </div>
+
+                            <div class="position-number-player">
+                                ${player.number ? "#" + player.number : ""}
+                            </div>
+                        `
+                        : `
+                            <div class="position-name">
+                                Frei
+                            </div>
+                        `
+                    }
+
+                </div>
+            `;
+
+        }).join("");
+
+
+    const onCourt =
+        Object.values(game.lineup);
+
+    const bench =
+        data.players.filter(
+            p => !onCourt.includes(p.id)
+        );
+
+    const benchContainer =
+        document.getElementById("bench");
+
+    benchContainer.innerHTML =
+        bench.length
+        ? bench.map(player => `
+
+            <button class="bench-player"
+                onclick="choosePositionForPlayer(${player.id})">
+
+                ${player.number ? "#" + player.number + " " : ""}
+                ${escapeHtml(player.name)}
+
+            </button>
+
+        `).join("")
+        : `
+            <span class="small">
+                Keine Spielerinnen auf der Bank.
+            </span>
+        `;
+}
+
+
+function renderSubstitutionHint() {
+
+    const container =
+        document.getElementById("substitutionHint");
+
+    if (!substitutionPosition) {
+
+        container.innerHTML = "";
+
+        return;
+    }
+
+    const game = getCurrentGame();
+
+    const player =
+        getPlayer(game.lineup[substitutionPosition]);
+
+    container.innerHTML = `
+
+        <div class="substitution-hint">
+
+            ${
+                player
+                ? `Du möchtest <strong>${escapeHtml(player.name)}</strong>
+                   auf Position ${substitutionPosition} wechseln.`
+                : `Position ${substitutionPosition} ausgewählt.`
+            }
+
+            <br>
+
+            Tippe jetzt auf eine Spielerin auf der Bank.
+
+        </div>
+
+    `;
+}
+
+
+function renderActionPlayers(game) {
+
+    const container =
+        document.getElementById("actionPlayers");
+
+    const onCourt =
+        Object.values(game.lineup)
+            .filter(Boolean);
+
+    const players =
+        data.players.filter(
+            p => onCourt.includes(p.id)
+        );
+
+    container.innerHTML =
+        players.map(player => `
+
+            <button
+                class="player-chip ${
+                    selectedPlayerId === player.id
+                        ? "selected"
+                        : ""
+                }"
+                onclick="selectActionPlayer(${player.id})">
+
+                ${player.number ? "#" + player.number + " " : ""}
+                ${escapeHtml(player.name)}
+
+            </button>
+
+        `).join("");
+}
+
+
+function selectActionPlayer(id) {
+
+    selectedPlayerId = id;
+
+    renderLive();
+}
+
+
+function selectCategory(category) {
+
+    selectedCategory = category;
+
+    renderActions();
+}
+
+
+function renderActions() {
+
+    const container =
+        document.getElementById("actionButtons");
+
+    document.querySelectorAll(".category-buttons button")
+        .forEach(btn => btn.classList.remove("active"));
+
+    const buttons =
+        document.querySelectorAll(".category-buttons button");
+
+    const categories = [
+        "attack",
+        "reception",
+        "serve",
+        "block",
+        "defense"
+    ];
+
+    const index =
+        categories.indexOf(selectedCategory);
+
+    if (index >= 0 && buttons[index]) {
+        buttons[index].classList.add("active");
+    }
+
+    if (!selectedCategory) {
+
+        container.innerHTML = `
+            <div class="small">
+                Zuerst eine Kategorie auswählen.
+            </div>
+        `;
+
+        return;
+    }
+
+    const actions = {
+
+        attack: [
+            ["kill", "Punkt / Kill"],
+            ["playable", "Spielbar"],
+            ["error", "Fehler"],
+            ["blocked", "Geblockt"]
+        ],
+
+        reception: [
+            ["positive", "Positiv"],
+            ["neutral", "Neutral"],
+            ["negative", "Negativ"],
+            ["error", "Fehler / Ass"]
+        ],
+
+        serve: [
+            ["ace", "Ass"],
+            ["pressure", "Druckvoll / gut"],
+            ["normal", "Normal / im Spiel"],
+            ["error", "Fehler"]
+        ],
+
+        block: [
+            ["point", "Blockpunkt"],
+            ["touch", "Touch"],
+            ["error", "Fehler"]
+        ],
+
+        defense: [
+            ["successful", "Erfolgreich"],
+            ["error", "Fehler"]
+        ]
+
+    };
+
+    container.innerHTML =
+        actions[selectedCategory].map(([type,label]) => `
+
+            <button
+                onclick="recordAction('${selectedCategory}','${type}')">
+
+                ${label}
+
+            </button>
+
+        `).join("");
+}
+
+
+/* =========================
+   AKTION AUFZEICHNEN
+========================= */
+
+function recordAction(category, type) {
+
+    const game = getCurrentGame();
+
+    if (!game || game.finished) return;
+
+    if (!selectedPlayerId) {
+
+        alert("Bitte zuerst eine Spielerin auswählen.");
+
+        return;
+    }
+
+    const player =
+        getPlayer(selectedPlayerId);
+
+    if (!player) return;
+
+    let usPoint = false;
+    let opponentPoint = false;
+
+    /*
+       Punkte:
+       Kill, Ass und Blockpunkt -> eigener Punkt
+       Fehler / Block -> gegnerischer Punkt
+    */
+
+    if (
+        (category === "attack" && type === "kill") ||
+        (category === "serve" && type === "ace") ||
+        (category === "block" && type === "point")
+    ) {
+        usPoint = true;
+    }
+
+    if (
+        (category === "attack" &&
+            ["error","blocked"].includes(type)) ||
+
+        (category === "reception" &&
+            type === "error") ||
+
+        (category === "serve" &&
+            type === "error") ||
+
+        (category === "block" &&
+            type === "error") ||
+
+        (category === "defense" &&
+            type === "error")
+    ) {
+        opponentPoint = true;
+    }
+
+    const action = {
+
+        id: Date.now(),
+
+        playerId: player.id,
+
+        playerName: player.name,
+
+        category,
+
+        type,
+
+        usPoint,
+
+        opponentPoint,
+
+        set: game.currentSet,
+
+        time: new Date().toISOString()
+
+    };
+
+    game.actions.push(action);
+
+    if (usPoint) {
+        game.scoreUs++;
+    }
+
+    if (opponentPoint) {
+        game.scoreOpponent++;
+    }
+
+    selectedPlayerId = null;
+    selectedCategory = null;
+    substitutionPosition = null;
+
+    saveData();
+
+    renderLive();
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+function changeScore(team, amount) {
+
+    const game = getCurrentGame();
+
+    if (!game || game.finished) return;
+
+    if (team === "us") {
+
+        game.scoreUs =
+            Math.max(0, game.scoreUs + amount);
+
+    } else {
+
+        game.scoreOpponent =
+            Math.max(0, game.scoreOpponent + amount);
+    }
+
+    saveData();
+
+    renderLive();
+}
+
+
+function undoLastAction() {
+
+    const game = getCurrentGame();
+
+    if (!game || !game.actions.length) {
+
+        alert("Keine Aktion zum Rückgängigmachen.");
+
+        return;
+    }
+
+    const action =
+        game.actions[game.actions.length - 1];
+
+    if (action.set !== game.currentSet) {
+
+        alert(
+            "Die letzte Aktion gehört zu einem vorherigen Satz."
+        );
+
+        return;
+    }
+
+    game.actions.pop();
+
+    if (action.usPoint) {
+        game.scoreUs =
+            Math.max(0, game.scoreUs - 1);
+    }
+
+    if (action.opponentPoint) {
+        game.scoreOpponent =
+            Math.max(0, game.scoreOpponent - 1);
+    }
+
+    saveData();
+
+    renderLive();
+}
+
+
+/* =========================
+   SÄTZE / SPIEL
+========================= */
+
+function finishSet() {
+
+    const game = getCurrentGame();
+
+    if (!game || game.finished) return;
+
+    if (
+        game.scoreUs === 0 &&
+        game.scoreOpponent === 0
+    ) {
+
+        alert("Der Satz hat noch keinen Spielstand.");
+
+        return;
+    }
+
+    if (!confirm(
+        `Satz ${game.currentSet} mit ${game.scoreUs}:${game.scoreOpponent} beenden?`
+    )) {
+        return;
+    }
+
+    game.sets.push({
+
+        set: game.currentSet,
+
+        us: game.scoreUs,
+
+        opponent: game.scoreOpponent
+
+    });
+
+    game.scoreUs = 0;
+    game.scoreOpponent = 0;
+
+    if (game.currentSet < 5) {
+        game.currentSet++;
+    }
+
+    selectedPlayerId = null;
+    selectedCategory = null;
+    substitutionPosition = null;
+
+    saveData();
+
+    renderLive();
+}
+
+
+function finishGame() {
+
+    const game = getCurrentGame();
+
+    if (!game) return;
+
+    if (!game.sets.length) {
+
+        alert(
+            "Beende zuerst mindestens einen Satz."
+        );
+
+        return;
+    }
+
+    if (
+        game.scoreUs !== 0 ||
+        game.scoreOpponent !== 0
+    ) {
+
+        const saveCurrentSet =
+            confirm(
+                `Der aktuelle Satz hat ${game.scoreUs}:${game.scoreOpponent}. Soll dieser Satz gespeichert werden?`
+            );
+
+        if (saveCurrentSet) {
+
+            game.sets.push({
+
+                set: game.currentSet,
+
+                us: game.scoreUs,
+
+                opponent: game.scoreOpponent
+
+            });
+
+        }
+    }
+
+    if (!confirm("Spiel wirklich beenden?")) return;
+
+    game.finished = true;
+
+    saveData();
+
+    showPage("analysis");
+}
+
+
+function getSetScore(game) {
+
+    let us = 0;
+    let opponent = 0;
+
+    game.sets.forEach(set => {
+
+        if (set.us > set.opponent) {
+            us++;
+        }
+
+        if (set.opponent > set.us) {
+            opponent++;
+        }
+
+    });
+
+    return { us, opponent };
+}
+
+
+/* =========================
+   STATISTIK
+========================= */
+
+function countAction(actions, category, type) {
+
+    return actions.filter(
+        a =>
+            a.category === category &&
+            a.type === type
+    ).length;
+}
+
+
+function getStats(actions) {
+
+    /* ANGREIFEN */
+
+    const attackKills =
+        countAction(actions, "attack", "kill");
+
+    const attackPlayable =
+        countAction(actions, "attack", "playable");
+
+    const attackErrors =
+        countAction(actions, "attack", "error");
+
+    const attackBlocked =
+        countAction(actions, "attack", "blocked");
+
+    const attackAttempts =
+        attackKills +
+        attackPlayable +
+        attackErrors +
+        attackBlocked;
+
+    /*
+       DIE GEWÜNSCHTE ANGRIFFSERFOLGSQUOTE:
+
+       erfolgreiche Angriffe /
+       alle erfassten Angriffe
+
+       Beispiel:
+       4 Punkte bei 10 Angriffen = 40 %
+    */
+
+    const attackSuccessRate =
+        attackAttempts
+            ? (attackKills / attackAttempts) * 100
+            : 0;
+
+
+    /* ANNAHME */
+
+    const receptionPositive =
+        countAction(actions, "reception", "positive");
+
+    const receptionNeutral =
+        countAction(actions, "reception", "neutral");
+
+    const receptionNegative =
+        countAction(actions, "reception", "negative");
+
+    const receptionErrors =
+        countAction(actions, "reception", "error");
+
+    const receptionAttempts =
+        receptionPositive +
+        receptionNeutral +
+        receptionNegative +
+        receptionErrors;
+
+    const receptionPositiveRate =
+        receptionAttempts
+            ? (receptionPositive / receptionAttempts) * 100
+            : 0;
+
+
+    /* AUFSCHLAG */
+
+    const serveAces =
+        countAction(actions, "serve", "ace");
+
+    const servePressure =
+        countAction(actions, "serve", "pressure");
+
+    const serveNormal =
+        countAction(actions, "serve", "normal");
+
+    const serveErrors =
+        countAction(actions, "serve", "error");
+
+    const serveAttempts =
+        serveAces +
+        servePressure +
+        serveNormal +
+        serveErrors;
+
+
+    /* BLOCK */
+
+    const blockPoints =
+        countAction(actions, "block", "point");
+
+    const blockTouches =
+        countAction(actions, "block", "touch");
+
+    const blockErrors =
+        countAction(actions, "block", "error");
+
+    const blockAttempts =
+        blockPoints +
+        blockTouches +
+        blockErrors;
+
+
+    /* ABWEHR */
+
+    const defenseSuccessful =
+        countAction(actions, "defense", "successful");
+
+    const defenseErrors =
+        countAction(actions, "defense", "error");
+
+    const defenseAttempts =
+        defenseSuccessful +
+        defenseErrors;
+
+    /*
+       DIE GEWÜNSCHTE ABWEHREFFIZIENZ:
+
+       erfolgreiche Abwehraktionen /
+       alle Abwehraktionen
+    */
+
+    const defenseEfficiency =
+        defenseAttempts
+            ? (defenseSuccessful / defenseAttempts) * 100
+            : 0;
+
+
+    return {
+
+        attackKills,
+        attackPlayable,
+        attackErrors,
+        attackBlocked,
+        attackAttempts,
+        attackSuccessRate,
+
+        receptionPositive,
+        receptionNeutral,
+        receptionNegative,
+        receptionErrors,
+        receptionAttempts,
+        receptionPositiveRate,
+
+        serveAces,
+        servePressure,
+        serveNormal,
+        serveErrors,
+        serveAttempts,
+
+        blockPoints,
+        blockTouches,
+        blockErrors,
+        blockAttempts,
+
+        defenseSuccessful,
+        defenseErrors,
+        defenseAttempts,
+        defenseEfficiency
+
+    };
+}
+
+
+/* =========================
+   ANALYSE
+========================= */
+
+function renderAnalysis() {
+
+    const container =
+        document.getElementById("analysisContent");
+
+    const game = getCurrentGame();
+
+    if (!game) {
+
+        container.innerHTML = `
+            <div class="card empty">
+                Kein Spiel ausgewählt.
+            </div>
+        `;
+
+        return;
+    }
+
+    const allStats =
+        getStats(game.actions);
+
+    const setScore =
+        getSetScore(game);
+
+    container.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                ${escapeHtml(game.opponent)}
+            </h2>
+
+            <div class="small">
+                ${formatDate(game.date)}
+            </div>
+
+            <div style="margin-top:10px;font-size:24px;font-weight:800;">
+                ${setScore.us} : ${setScore.opponent}
+            </div>
+
+            <div class="small">
+                Endstand in Sätzen
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Gesamtanalyse</h2>
+
+            ${renderTeamStats(allStats)}
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Spielerinnen</h2>
+
+            ${renderPlayerTable(game.actions)}
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Einzelne Sätze</h2>
+
+            ${
+                game.sets.length
+                ? game.sets.map(set => {
+
+                    const actions =
+                        game.actions.filter(
+                            a => a.set === set.set
+                        );
+
+                    const stats =
+                        getStats(actions);
+
+                    return `
+
+                        <details>
+
+                            <summary>
+                                Satz ${set.set}
+                                · ${set.us}:${set.opponent}
+                            </summary>
+
+                            <div class="details-content">
+
+                                ${renderTeamStats(stats)}
+
+                                <h3>
+                                    Spielerinnen
+                                </h3>
+
+                                ${renderPlayerTable(actions)}
+
+                            </div>
+
+                        </details>
+
+                    `;
+
+                }).join("")
+                : `
+                    <div class="empty">
+                        Noch keine Sätze abgeschlossen.
+                    </div>
+                `
+            }
+
+        </div>
+
+    `;
+}
+
+
+function renderTeamStats(stats) {
+
+    return `
+
+        <div class="stat-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Angriffserfolgsquote
+                </div>
+
+                <div class="stat-value">
+                    ${formatPercent(stats.attackSuccessRate)}
+                </div>
+
+                <div class="stat-sub">
+                    ${stats.attackKills} Punkte /
+                    ${stats.attackAttempts} Angriffe
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Abwehreffizienz
+                </div>
+
+                <div class="stat-value">
+                    ${formatPercent(stats.defenseEfficiency)}
+                </div>
+
+                <div class="stat-sub">
+                    ${stats.defenseSuccessful} erfolgreich /
+                    ${stats.defenseAttempts} Abwehraktionen
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Annahme positiv
+                </div>
+
+                <div class="stat-value">
+                    ${formatPercent(stats.receptionPositiveRate)}
+                </div>
+
+                <div class="stat-sub">
+                    ${stats.receptionPositive} positiv /
+                    ${stats.receptionAttempts} Annahmen
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Asse
+                </div>
+
+                <div class="stat-value">
+                    ${stats.serveAces}
+                </div>
+
+                <div class="stat-sub">
+                    ${stats.serveAttempts} Aufschläge
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Blockpunkte
+                </div>
+
+                <div class="stat-value">
+                    ${stats.blockPoints}
+                </div>
+
+                <div class="stat-sub">
+                    ${stats.blockAttempts} Blockaktionen
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div style="margin-top:14px;">
+
+            <strong>Angriff:</strong>
+            ${stats.attackKills} Punkte ·
+            ${stats.attackPlayable} spielbar ·
+            ${stats.attackErrors} Fehler ·
+            ${stats.attackBlocked} geblockt
+
+            <br><br>
+
+            <strong>Abwehr:</strong>
+            ${stats.defenseSuccessful} erfolgreich ·
+            ${stats.defenseErrors} Fehler
+
+        </div>
+
+    `;
+}
+
+
+function renderPlayerTable(actions) {
+
+    const playerIds =
+        [...new Set(actions.map(a => a.playerId))];
+
+    if (!playerIds.length) {
+
+        return `
+            <div class="empty">
+                Noch keine Aktionen erfasst.
+            </div>
+        `;
+    }
+
+    const rows =
+        playerIds.map(id => {
+
+            const player =
+                getPlayer(id);
+
+            const playerActions =
+                actions.filter(
+                    a => a.playerId === id
+                );
+
+            const stats =
+                getStats(playerActions);
+
+            return `
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${
+                                player
+                                ? escapeHtml(player.name)
+                                : escapeHtml(
+                                    playerActions[0]?.playerName || "-"
+                                  )
+                            }
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${stats.attackKills}
+                        /
+                        ${stats.attackAttempts}
+                    </td>
+
+                    <td>
+                        ${formatPercent(
+                            stats.attackSuccessRate
+                        )}
+                    </td>
+
+                    <td>
+                        ${stats.receptionPositive}
+                        /
+                        ${stats.receptionAttempts}
+                    </td>
+
+                    <td>
+                        ${stats.serveAces}
+                    </td>
+
+                    <td>
+                        ${stats.serveErrors}
+                    </td>
+
+                    <td>
+                        ${stats.blockPoints}
+                    </td>
+
+                    <td>
+                        ${formatPercent(
+                            stats.defenseEfficiency
+                        )}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+
+    return `
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Spielerin</th>
+
+                        <th>Angriffe</th>
+
+                        <th>Angriff %</th>
+
+                        <th>Ann. +</th>
+
+                        <th>Asse</th>
+
+                        <th>Aufschlagfehler</th>
+
+                        <th>Block</th>
+
+                        <th>Abwehr %</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${rows}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+
+            Angriff % =
+            Punkte ÷ alle erfassten Angriffe.
+
+            <br>
+
+            Abwehr % =
+            erfolgreiche Abwehraktionen ÷ alle erfassten Abwehraktionen.
+
+        </div>
+
+    `;
+}
+
+
+/* =========================
+   HILFSFUNKTIONEN
+========================= */
+
+function formatPercent(value) {
+
+    return `${value.toFixed(1)} %`;
+}
+
+
+function formatDate(date) {
+
+    if (!date) return "";
+
+    const d = new Date(date + "T00:00:00");
+
+    return d.toLocaleDateString(
+        "de-DE",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+}
+
+
+function escapeHtml(text) {
+
+    if (text === undefined || text === null) {
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   START
+========================= */
+
+renderGames();
+renderRoster();
+renderAnalysis();
+
+</script>
+
+</body>
+</html>
