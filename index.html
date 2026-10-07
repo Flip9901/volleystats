@@ -1,0 +1,3626 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VolleyStats</title>
+
+<style>
+:root{
+  --bg:#f3f5f8;
+  --card:#fff;
+  --text:#17202a;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --accent:#2563eb;
+  --accent2:#dbeafe;
+  --green:#16a34a;
+  --red:#dc2626;
+  --orange:#ea580c;
+  --shadow:0 8px 25px rgba(0,0,0,.07);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,input,select{font:inherit}
+button{border:0;cursor:pointer}
+
+header{
+  background:#111827;
+  color:white;
+  padding:14px 18px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.headerRow{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.teamSelect{
+  background:#1f2937;
+  color:white;
+  border:1px solid #374151;
+  padding:9px 12px;
+  border-radius:10px;
+}
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:18px 18px 90px;
+}
+
+nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:white;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  z-index:30;
+}
+
+nav button{
+  background:white;
+  color:#6b7280;
+  padding:13px 18px;
+  min-width:90px;
+}
+
+nav button.active{
+  color:var(--accent);
+  font-weight:700;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+
+h1,h2,h3,h4{margin-top:0}
+
+.grid{
+  display:grid;
+  gap:14px;
+}
+
+.grid2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+@media(max-width:700px){
+  .grid2{grid-template-columns:1fr}
+}
+
+.btn{
+  padding:11px 15px;
+  border-radius:11px;
+  background:#e5e7eb;
+  color:#111827;
+  font-weight:600;
+}
+
+.btn.primary{
+  background:var(--accent);
+  color:white;
+}
+
+.btn.green{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.btn.red{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.btn.orange{
+  background:#ffedd5;
+  color:#9a3412;
+}
+
+.btn.small{
+  padding:7px 10px;
+  font-size:13px;
+}
+
+input,select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:white;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.formGroup{
+  margin-bottom:12px;
+}
+
+.score{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:25px;
+  font-size:52px;
+  font-weight:800;
+}
+
+.scoreTeam{
+  text-align:center;
+}
+
+.scoreTeam small{
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:600;
+}
+
+.setScore{
+  text-align:center;
+  color:var(--muted);
+  margin-top:5px;
+}
+
+.court{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  max-width:650px;
+  margin:15px auto;
+}
+
+.position{
+  min-height:105px;
+  background:#eff6ff;
+  border:2px solid #bfdbfe;
+  border-radius:15px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.position.selected{
+  border-color:var(--accent);
+  background:var(--accent2);
+}
+
+.position .pos{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.position .name{
+  font-weight:800;
+  margin-top:7px;
+}
+
+.bench{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+}
+
+.benchPlayer{
+  padding:10px 13px;
+  border-radius:11px;
+  background:#f3f4f6;
+  border:1px solid var(--line);
+  cursor:grab;
+}
+
+.categoryGrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+
+@media(max-width:700px){
+  .categoryGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.category{
+  padding:13px 8px;
+  border-radius:12px;
+  background:#f3f4f6;
+  font-weight:700;
+}
+
+.category.selected{
+  background:var(--accent);
+  color:white;
+}
+
+.resultGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+@media(max-width:600px){
+  .resultGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.result{
+  padding:15px 8px;
+  border-radius:12px;
+  background:#f3f4f6;
+  font-weight:700;
+}
+
+.result.green{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.result.red{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.result.orange{
+  background:#ffedd5;
+  color:#9a3412;
+}
+
+.lastAction{
+  border-left:5px solid var(--accent);
+  background:#eff6ff;
+}
+
+.statGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+@media(max-width:700px){
+  .statGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+.stat{
+  background:#f8fafc;
+  border-radius:13px;
+  padding:13px;
+}
+
+.stat .value{
+  font-size:22px;
+  font-weight:800;
+}
+
+.stat .label{
+  color:var(--muted);
+  font-size:12px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:9px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+th{
+  background:#f8fafc;
+}
+
+.scroll{
+  overflow-x:auto;
+}
+
+.actionLog{
+  max-height:350px;
+  overflow:auto;
+}
+
+.logItem{
+  padding:8px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+
+.pill{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#eef2ff;
+  color:#3730a3;
+  font-size:11px;
+  font-weight:700;
+}
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:25px;
+}
+
+.flex{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.between{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.help{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.keyboard{
+  background:#111827;
+  color:white;
+  border-radius:14px;
+  padding:14px;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.sectionTabs{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.sectionTab{
+  padding:9px 13px;
+  border-radius:10px;
+  background:#e5e7eb;
+}
+
+.sectionTab.active{
+  background:var(--accent);
+  color:white;
+}
+
+.keyBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:30px;
+  height:30px;
+  padding:0 7px;
+  border-radius:8px;
+  background:#111827;
+  color:white;
+  font-weight:800;
+}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:#1e40af;
+  font-size:13px;
+  margin-bottom:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="headerRow">
+    <div class="logo">🏐 VolleyStats</div>
+    <select id="teamSelect" class="teamSelect"></select>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav>
+  <button data-page="live">Live</button>
+  <button data-page="games">Spiele</button>
+  <button data-page="analysis">Analyse</button>
+  <button data-page="roster">Kader</button>
+</nav>
+
+<script>
+
+const KEY="volleystats_final_v2";
+
+let db=JSON.parse(localStorage.getItem(KEY)||"null");
+
+if(!db){
+
+  db={
+    teams:[
+      {
+        id:id(),
+        name:"Damen",
+        players:[],
+        games:[]
+      }
+    ],
+    currentTeam:null,
+    currentGame:null
+  };
+
+  db.currentTeam=db.teams[0].id;
+
+  save();
+}
+
+let state={
+  page:"games",
+  selectedPlayer:null,
+  selectedCategory:null,
+  opponentMode:false,
+  analysisTab:"overall",
+  undoStack:[]
+};
+
+const categories={
+
+  attack:{
+    title:"Angriff",
+    results:[
+      ["kill","Punkt","green"],
+      ["playable","Spielbar",""],
+      ["error","Fehler","red"],
+      ["blocked","Geblockt","red"]
+    ]
+  },
+
+  reception:{
+    title:"Annahme",
+    results:[
+      ["positive","Positiv","green"],
+      ["playable","Spielbar",""],
+      ["error","Fehler","red"]
+    ]
+  },
+
+  serve:{
+    title:"Aufschlag",
+    results:[
+      ["ace","Ass","green"],
+      ["pressure","Druckvoll",""],
+      ["normal","Normal",""],
+      ["error","Fehler","red"]
+    ]
+  },
+
+  block:{
+    title:"Block",
+    results:[
+      ["point","Punkt","green"],
+      ["touch","Touch",""],
+      ["error","Fehler","red"]
+    ]
+  },
+
+  defense:{
+    title:"Abwehr",
+    results:[
+      ["successful","Erfolgreich","green"],
+      ["playable","Spielbar",""],
+      ["error","Fehler","red"]
+    ]
+  }
+
+};
+
+const oppErrors=[
+  ["serveout","Aufschlag aus"],
+  ["servenet","Aufschlag Netz"],
+  ["attackout","Angriff aus"],
+  ["attacknet","Angriff Netz"],
+  ["net","Netz / Rotation"],
+  ["other","Sonstiger Fehler"]
+];
+
+/* ---------------- BASIC ---------------- */
+
+function id(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+}
+
+function team(){
+  return db.teams.find(t=>t.id===db.currentTeam);
+}
+
+function game(){
+  return team()?.games.find(g=>g.id===db.currentGame);
+}
+
+function player(pid){
+  return team()?.players.find(p=>p.id===pid);
+}
+
+function playerName(pid){
+
+  const p=player(pid);
+
+  if(!p) return "Unbekannt";
+
+  return `${p.number ? "#"+p.number+" " : ""}${p.name}`;
+}
+
+function playerKey(pid){
+
+  const p=player(pid);
+
+  return p?.scoutingKey || "";
+}
+
+function esc(x){
+
+  return String(x??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+function fmt(v){
+
+  if(!Number.isFinite(v)) return "0";
+
+  return Math.round(v*10)/10;
+}
+
+/* ---------------- UNDO ---------------- */
+
+function snapshot(){
+
+  state.undoStack.push(JSON.stringify(db));
+
+  if(state.undoStack.length>30){
+    state.undoStack.shift();
+  }
+}
+
+function undo(){
+
+  if(!state.undoStack.length){
+    alert("Nichts zum Rückgängigmachen.");
+    return;
+  }
+
+  db=JSON.parse(state.undoStack.pop());
+
+  save();
+  render();
+}
+
+/* ---------------- TEAM ---------------- */
+
+document.getElementById("teamSelect").addEventListener("change",e=>{
+
+  db.currentTeam=e.target.value;
+  db.currentGame=null;
+
+  state.page="games";
+  state.selectedPlayer=null;
+  state.selectedCategory=null;
+
+  save();
+  render();
+});
+
+/* ---------------- NAV ---------------- */
+
+document.querySelectorAll("nav button").forEach(btn=>{
+
+  btn.addEventListener("click",()=>{
+
+    state.page=btn.dataset.page;
+
+    state.selectedPlayer=null;
+    state.selectedCategory=null;
+    state.opponentMode=false;
+
+    render();
+  });
+
+});
+
+/* ---------------- GAME CREATION ---------------- */
+
+function createGame(){
+
+  const t=team();
+
+  if(t.players.length<6){
+
+    alert(
+      "Bitte mindestens 6 Spieler mit Scouting-Taste im Kader anlegen."
+    );
+
+    state.page="roster";
+    render();
+
+    return;
+  }
+
+  const opponent=prompt("Gegner:");
+
+  if(!opponent) return;
+
+  const date=prompt(
+    "Datum:",
+    new Date().toISOString().slice(0,10)
+  ) || new Date().toISOString().slice(0,10);
+
+  const serving=confirm(
+    "Seid ihr zu Beginn des Spiels im Aufschlag?\n\nOK = Wir servieren\nAbbrechen = Gegner serviert"
+  );
+
+  /*
+   * Die ersten sechs Spieler nach Scouting-Taste
+   * werden als Startaufstellung verwendet.
+   */
+  const starters=t.players
+    .filter(p=>p.scoutingKey>=1 && p.scoutingKey<=14)
+    .sort((a,b)=>a.scoutingKey-b.scoutingKey)
+    .slice(0,6)
+    .map(p=>p.id);
+
+  if(starters.length<6){
+
+    alert(
+      "Es müssen mindestens 6 Spieler eine Scouting-Taste besitzen."
+    );
+
+    return;
+  }
+
+  const g={
+
+    id:id(),
+
+    opponent,
+    date,
+    created:new Date().toISOString(),
+
+    currentSet:1,
+
+    scoreUs:0,
+    scoreOpponent:0,
+
+    sets:[],
+
+    actions:[],
+
+    lineup:starters,
+
+    bench:t.players
+      .filter(p=>!starters.includes(p.id))
+      .map(p=>p.id),
+
+    lineups:{
+      1:[...starters]
+    },
+
+    setFeeds:{
+      1:{}
+    },
+
+    servingTeam:serving?"us":"opponent",
+
+    finished:false,
+
+    lastAction:null
+  };
+
+  t.games.unshift(g);
+
+  db.currentGame=g.id;
+
+  save();
+
+  state.page="live";
+
+  render();
+}
+
+function openGame(gid){
+
+  db.currentGame=gid;
+
+  state.page="live";
+  state.selectedPlayer=null;
+  state.selectedCategory=null;
+
+  save();
+
+  render();
+}
+
+function deleteGame(gid){
+
+  if(!confirm("Spiel wirklich löschen?")) return;
+
+  const t=team();
+
+  t.games=t.games.filter(g=>g.id!==gid);
+
+  if(db.currentGame===gid){
+    db.currentGame=null;
+  }
+
+  save();
+
+  render();
+}
+
+/* ---------------- ROTATION ---------------- */
+
+/*
+  Positionen werden als
+
+  4 3 2
+  5 6 1
+
+  dargestellt.
+
+  Array:
+  [4,3,2,5,6,1]
+
+  Rotation:
+  1 -> 6 -> 5 -> 4 -> 3 -> 2 -> 1
+
+  Deshalb:
+  [P2,P3,P4,P5,P6,P1]
+*/
+
+function rotate(g){
+
+  g.lineup=[
+    g.lineup[1],
+    g.lineup[2],
+    g.lineup[3],
+    g.lineup[4],
+    g.lineup[5],
+    g.lineup[0]
+  ];
+
+  g.lineups[g.currentSet]=[...g.lineup];
+}
+
+function point(g,side){
+
+  if(side==="us"){
+
+    /*
+      Wenn Gegner serviert und wir gewinnen:
+      Sideout + Rotation + wir servieren.
+    */
+
+    if(g.servingTeam==="opponent"){
+      rotate(g);
+    }
+
+    g.scoreUs++;
+    g.servingTeam="us";
+
+  }else{
+
+    /*
+      Gegner gewinnt:
+      keine Rotation bei uns.
+      Gegner erhält Aufschlag.
+    */
+
+    g.scoreOpponent++;
+    g.servingTeam="opponent";
+  }
+}
+
+/* ---------------- ACTIONS ---------------- */
+
+function record(category,result,pid){
+
+  const g=game();
+
+  if(!g) return;
+
+  if(!pid){
+
+    alert("Bitte zuerst einen Spieler auswählen.");
+
+    return;
+  }
+
+  snapshot();
+
+  const action={
+
+    id:id(),
+
+    time:new Date().toISOString(),
+
+    set:g.currentSet,
+
+    player:pid,
+
+    category,
+
+    result
+  };
+
+  g.actions.push(action);
+
+  let usPoint=false;
+  let opponentPoint=false;
+
+  if(category==="attack"){
+
+    if(result==="kill") usPoint=true;
+
+    if(
+      result==="error" ||
+      result==="blocked"
+    ){
+      opponentPoint=true;
+    }
+  }
+
+  if(category==="reception"){
+
+    if(result==="error"){
+      opponentPoint=true;
+    }
+  }
+
+  if(category==="serve"){
+
+    if(result==="ace"){
+      usPoint=true;
+    }
+
+    if(result==="error"){
+      opponentPoint=true;
+    }
+  }
+
+  if(category==="block"){
+
+    if(result==="point"){
+      usPoint=true;
+    }
+
+    if(result==="error"){
+      opponentPoint=true;
+    }
+  }
+
+  if(category==="defense"){
+
+    if(result==="error"){
+      opponentPoint=true;
+    }
+  }
+
+  if(usPoint){
+    point(g,"us");
+  }
+
+  if(opponentPoint){
+    point(g,"opponent");
+  }
+
+  g.lastAction={
+    type:"player",
+    player:pid,
+    category,
+    result,
+    usPoint,
+    opponentPoint
+  };
+
+  state.selectedPlayer=null;
+  state.selectedCategory=null;
+
+  save();
+
+  render();
+}
+
+function opponentError(type){
+
+  const g=game();
+
+  if(!g) return;
+
+  snapshot();
+
+  const label=
+    oppErrors.find(x=>x[0]===type)?.[1] || type;
+
+  g.actions.push({
+
+    id:id(),
+    time:new Date().toISOString(),
+    set:g.currentSet,
+    player:null,
+    category:"opponentError",
+    result:type
+  });
+
+  point(g,"us");
+
+  g.lastAction={
+    type:"opponentError",
+    label,
+    usPoint:true
+  };
+
+  state.selectedPlayer=null;
+  state.selectedCategory=null;
+  state.opponentMode=false;
+
+  save();
+
+  render();
+}
+
+/* ---------------- SUBSTITUTION ---------------- */
+
+function substituteBench(pid,positionIndex){
+
+  const g=game();
+
+  if(!g) return;
+
+  snapshot();
+
+  const old=g.lineup[positionIndex];
+
+  const benchIndex=g.bench.indexOf(pid);
+
+  if(benchIndex===-1) return;
+
+  g.lineup[positionIndex]=pid;
+
+  g.bench[benchIndex]=old;
+
+  g.lineups[g.currentSet]=[...g.lineup];
+
+  save();
+
+  render();
+}
+
+function swapPlayers(a,b){
+
+  const g=game();
+
+  if(!g) return;
+
+  snapshot();
+
+  [
+    g.lineup[a],
+    g.lineup[b]
+  ]=[
+    g.lineup[b],
+    g.lineup[a]
+  ];
+
+  g.lineups[g.currentSet]=[...g.lineup];
+
+  save();
+
+  render();
+}
+
+/* ---------------- SETS ---------------- */
+
+function finishSet(){
+
+  const g=game();
+
+  if(!g) return;
+
+  if(g.scoreUs===g.scoreOpponent){
+
+    alert("Ein Satz kann nicht bei Gleichstand beendet werden.");
+
+    return;
+  }
+
+  snapshot();
+
+  g.sets.push({
+
+    set:g.currentSet,
+
+    us:g.scoreUs,
+
+    opp:g.scoreOpponent,
+
+    lineup:[...g.lineup]
+  });
+
+  const usSets=
+    g.sets.filter(s=>s.us>s.opp).length;
+
+  const oppSets=
+    g.sets.filter(s=>s.opp>s.us).length;
+
+  if(usSets>=3 || oppSets>=3){
+
+    g.finished=true;
+
+    save();
+
+    render();
+
+    return;
+  }
+
+  g.currentSet++;
+
+  g.scoreUs=0;
+  g.scoreOpponent=0;
+
+  g.lineups[g.currentSet]=[...g.lineup];
+  g.setFeeds[g.currentSet]={};
+
+  save();
+
+  render();
+}
+
+/* ---------------- FEEDS ---------------- */
+
+function setFeed(pid,value){
+
+  const g=game();
+
+  if(!g) return;
+
+  const n=Math.max(0,Number(value)||0);
+
+  g.setFeeds[g.currentSet] ||= {};
+
+  g.setFeeds[g.currentSet][pid]=n;
+
+  save();
+}
+
+function feedTotal(g,pid){
+
+  let total=0;
+
+  Object.values(g.setFeeds||{}).forEach(set=>{
+
+    total+=Number(set?.[pid]||0);
+
+  });
+
+  return total;
+}
+
+function allFeeds(g){
+
+  let total=0;
+
+  Object.values(g.setFeeds||{}).forEach(set=>{
+
+    Object.values(set||{}).forEach(n=>{
+      total+=Number(n||0);
+    });
+
+  });
+
+  return total;
+}
+
+/* ---------------- STATS ---------------- */
+
+function stats(g,setNo=null){
+
+  const actions=g.actions.filter(a=>
+    setNo===null || a.set===setNo
+  );
+
+  const s={
+
+    attackN:0,
+    attackK:0,
+    attackE:0,
+    attackB:0,
+
+    recN:0,
+    recP:0,
+    recPlayable:0,
+    recE:0,
+
+    serveN:0,
+    aces:0,
+    servePressure:0,
+    serveNormal:0,
+    serveE:0,
+
+    blockN:0,
+    blockP:0,
+    blockTouch:0,
+    blockE:0,
+
+    defN:0,
+    defS:0,
+    defPlayable:0,
+    defE:0
+  };
+
+  actions.forEach(a=>{
+
+    if(a.category==="attack"){
+
+      s.attackN++;
+
+      if(a.result==="kill") s.attackK++;
+      if(a.result==="error") s.attackE++;
+      if(a.result==="blocked") s.attackB++;
+    }
+
+    if(a.category==="reception"){
+
+      s.recN++;
+
+      if(a.result==="positive") s.recP++;
+      if(a.result==="playable") s.recPlayable++;
+      if(a.result==="error") s.recE++;
+    }
+
+    if(a.category==="serve"){
+
+      s.serveN++;
+
+      if(a.result==="ace") s.aces++;
+      if(a.result==="pressure") s.servePressure++;
+      if(a.result==="normal") s.serveNormal++;
+      if(a.result==="error") s.serveE++;
+    }
+
+    if(a.category==="block"){
+
+      s.blockN++;
+
+      if(a.result==="point") s.blockP++;
+      if(a.result==="touch") s.blockTouch++;
+      if(a.result==="error") s.blockE++;
+    }
+
+    if(a.category==="defense"){
+
+      s.defN++;
+
+      if(a.result==="successful") s.defS++;
+      if(a.result==="playable") s.defPlayable++;
+      if(a.result==="error") s.defE++;
+    }
+
+  });
+
+  /*
+    Angriffserfolgsquote:
+    erfolgreiche Angriffe / alle erfassten Angriffe
+  */
+
+  s.attackRate=
+    s.attackN
+    ? s.attackK/s.attackN*100
+    : 0;
+
+  /*
+    Annahme:
+    positive / alle Annahmen
+  */
+
+  s.receptionRate=
+    s.recN
+    ? s.recP/s.recN*100
+    : 0;
+
+  /*
+    Abwehr:
+    erfolgreich / alle Abwehraktionen
+    (erfolgreich + spielbar + Fehler)
+  */
+
+  s.defenseRate=
+    s.defN
+    ? s.defS/s.defN*100
+    : 0;
+
+  s.serveAceRate=
+    s.serveN
+    ? s.aces/s.serveN*100
+    : 0;
+
+  s.blockRate=
+    s.blockN
+    ? s.blockP/s.blockN*100
+    : 0;
+
+  return s;
+}
+
+function playerStats(g,pid,setNo=null){
+
+  const actions=g.actions.filter(a=>
+    a.player===pid &&
+    (setNo===null || a.set===setNo)
+  );
+
+  const fake={
+    ...g,
+    actions
+  };
+
+  return stats(fake,null);
+}
+
+/* ---------------- STAT CARDS ---------------- */
+
+function statsCards(s){
+
+  return `
+
+  <div class="statGrid">
+
+    <div class="stat">
+      <div class="value">${fmt(s.attackRate)}%</div>
+      <div class="label">Angriffserfolgsquote</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${fmt(s.receptionRate)}%</div>
+      <div class="label">Annahme positiv</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${fmt(s.defenseRate)}%</div>
+      <div class="label">Abwehr erfolgreich</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${s.aces}</div>
+      <div class="label">Asse</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${s.attackK}/${s.attackN}</div>
+      <div class="label">Angriff Punkte</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${s.recP}/${s.recN}</div>
+      <div class="label">Annahme positiv</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${s.blockP}</div>
+      <div class="label">Blockpunkte</div>
+    </div>
+
+    <div class="stat">
+      <div class="value">${s.serveE}</div>
+      <div class="label">Aufschlagfehler</div>
+    </div>
+
+  </div>
+  `;
+}
+
+/* ---------------- LIVE ---------------- */
+
+function liveUI(){
+
+  const g=game();
+
+  if(!g){
+
+    return `
+      <div class="card">
+        <h2>Kein Spiel geöffnet</h2>
+        <p class="help">
+          Öffne ein Spiel oder erstelle ein neues.
+        </p>
+
+        <button
+          class="btn primary"
+          onclick="state.page='games';render()"
+        >
+          Zu den Spielen
+        </button>
+      </div>
+    `;
+  }
+
+  const t=team();
+
+  const s=stats(g,g.currentSet);
+
+  const setWinsUs=
+    g.sets.filter(x=>x.us>x.opp).length;
+
+  const setWinsOpp=
+    g.sets.filter(x=>x.opp>x.us).length;
+
+  const positions=[4,3,2,5,6,1];
+
+  return `
+
+  <div class="between">
+
+    <div>
+
+      <h2>${esc(t.name)} vs. ${esc(g.opponent)}</h2>
+
+      <span class="pill">
+        Satz ${g.currentSet}
+      </span>
+
+      <span class="pill">
+        ${
+          g.servingTeam==="us"
+          ? "Unser Aufschlag"
+          : "Gegnerischer Aufschlag"
+        }
+      </span>
+
+    </div>
+
+    <div class="flex">
+
+      <button class="btn orange" onclick="undo()">
+        ↩ Rückgängig
+      </button>
+
+      <button
+        class="btn"
+        onclick="state.page='analysis';render()"
+      >
+        Analyse
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div class="score">
+
+      <div class="scoreTeam">
+
+        ${g.scoreUs}
+
+        <small>${esc(t.name)}</small>
+
+      </div>
+
+      <div>:</div>
+
+      <div class="scoreTeam">
+
+        ${g.scoreOpponent}
+
+        <small>${esc(g.opponent)}</small>
+
+      </div>
+
+    </div>
+
+    <div class="setScore">
+      Sätze: ${setWinsUs}:${setWinsOpp}
+    </div>
+
+  </div>
+
+  ${
+    g.lastAction
+    ?
+    `
+    <div class="card lastAction">
+
+      <strong>Letzte Aktion</strong>
+
+      <div>
+
+        ${
+          g.lastAction.type==="opponentError"
+
+          ?
+
+          `Gegner: ${esc(g.lastAction.label)}
+           → Punkt für uns`
+
+          :
+
+          `${esc(playerName(g.lastAction.player))}
+           · ${esc(categories[g.lastAction.category]?.title||g.lastAction.category)}
+           · ${esc(
+              categories[g.lastAction.category]
+              ?.results
+              ?.find(x=>x[0]===g.lastAction.result)?.[1]
+              || g.lastAction.result
+           )}
+
+           ${
+             g.lastAction.usPoint
+             ? " → Punkt für uns"
+             : g.lastAction.opponentPoint
+             ? " → Punkt für Gegner"
+             : ""
+           }`
+
+        }
+
+      </div>
+
+    </div>
+    `
+    :""
+  }
+
+  <div class="card">
+
+    <h3>Aufstellung</h3>
+
+    <p class="help">
+      Spieler antippen. Bankspieler auf eine Position ziehen.
+    </p>
+
+    <div class="court">
+
+      ${
+        positions.map((pos,i)=>{
+
+          const pid=g.lineup[i];
+
+          return `
+
+            <div
+              class="position ${state.selectedPlayer===pid?"selected":""}"
+              data-pos="${i}"
+              draggable="true"
+              onclick="selectPlayer('${pid}')"
+            >
+
+              <div class="pos">
+                Position ${pos}
+              </div>
+
+              <div class="name">
+                ${esc(playerName(pid))}
+              </div>
+
+            </div>
+          `;
+
+        }).join("")
+      }
+
+    </div>
+
+    <h4>Bank</h4>
+
+    <div class="bench">
+
+      ${
+        g.bench.length
+
+        ?
+
+        g.bench.map(pid=>`
+
+          <div
+            class="benchPlayer"
+            draggable="true"
+            data-player="${pid}"
+          >
+            ${esc(playerName(pid))}
+          </div>
+
+        `).join("")
+
+        :
+
+        `<span class="help">
+          Keine weiteren Spieler auf der Bank.
+        </span>`
+      }
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>
+
+      ${
+        state.opponentMode
+
+        ?
+
+        "Gegnerischer Fehler – 1 bis 6"
+
+        :
+
+        state.selectedPlayer
+
+        ?
+
+        `Spieler:
+        ${esc(playerName(state.selectedPlayer))}
+        <span class="keyBadge">
+          ${formatKey(playerKey(state.selectedPlayer))}
+        </span>`
+
+        :
+
+        "Spieler auswählen"
+      }
+
+    </h3>
+
+    ${
+      state.opponentMode
+
+      ?
+
+      `
+
+      <div class="resultGrid">
+
+        ${
+          oppErrors.map((e,i)=>`
+
+            <button
+              class="result red"
+              onclick="opponentError('${e[0]}')"
+            >
+
+              <strong>${i+1}</strong><br>
+
+              ${esc(e[1])}
+
+            </button>
+
+          `).join("")
+        }
+
+      </div>
+
+      `
+
+      :
+
+      `
+
+      <div class="categoryGrid">
+
+        ${
+          Object.entries(categories)
+          .map(([key,c],i)=>`
+
+            <button
+              class="category ${
+                state.selectedCategory===key
+                ?"selected"
+                :""
+              }"
+              onclick="selectCategory('${key}')"
+            >
+
+              ${i+1}. ${c.title}
+
+            </button>
+
+          `).join("")
+        }
+
+      </div>
+
+      ${
+        state.selectedCategory
+
+        ?
+
+        `
+
+        <hr
+          style="
+            border:0;
+            border-top:1px solid var(--line);
+            margin:15px 0
+          "
+        >
+
+        <h3>
+          ${categories[state.selectedCategory].title}
+        </h3>
+
+        <div class="resultGrid">
+
+          ${
+            categories[state.selectedCategory]
+            .results
+            .map((r,i)=>`
+
+              <button
+                class="result ${r[2]}"
+                onclick="record(
+                  '${state.selectedCategory}',
+                  '${r[0]}',
+                  '${state.selectedPlayer}'
+                )"
+              >
+
+                <strong>${i+1}</strong><br>
+
+                ${esc(r[1])}
+
+              </button>
+
+            `).join("")
+          }
+
+        </div>
+
+        `
+
+        :
+
+        ""
+      }
+
+      `
+    }
+
+  </div>
+
+  <div class="card">
+
+    <div class="between">
+
+      <h3>Aktueller Satz</h3>
+
+      <span class="pill">
+        Satz ${g.currentSet}
+      </span>
+
+    </div>
+
+    ${statsCards(s)}
+
+  </div>
+
+  <div class="card">
+
+    <h3>
+      Zuspielverteilung – Satz ${g.currentSet}
+    </h3>
+
+    <p class="help">
+      Nach dem Satz kannst du hier manuell die Zuspiele eintragen.
+    </p>
+
+    <div class="scroll">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Spieler</th>
+            <th>Zuspiele</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${
+            t.players.map(p=>`
+
+              <tr>
+
+                <td>
+                  ${esc(playerName(p.id))}
+                </td>
+
+                <td>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value="${
+                      g.setFeeds[g.currentSet]?.[p.id]||0
+                    }"
+                    onchange="
+                      setFeed('${p.id}',this.value)
+                    "
+                  >
+
+                </td>
+
+              </tr>
+
+            `).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Gegnerischer Fehler</h3>
+
+    <button
+      class="bigButton"
+      onclick="
+        state.opponentMode=true;
+        state.selectedPlayer=null;
+        state.selectedCategory=null;
+        render()
+      "
+    >
+      0 → Gegnerischer Fehler
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div class="between">
+
+      <div>
+
+        <strong>
+          Satz ${g.currentSet} beenden
+        </strong>
+
+        <div class="help">
+          Aktuellen Satz speichern und nächsten Satz starten.
+        </div>
+
+      </div>
+
+      <button
+        class="btn primary"
+        onclick="finishSet()"
+      >
+        Satz beenden
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="card keyboard">
+
+    <strong>Numpad-Steuerung</strong><br>
+
+    Spieler:
+    <strong>1–9</strong> = Scouting-Taste 1–9,
+    <strong>Shift+1–5</strong> = Scouting-Taste 10–14<br>
+
+    Kategorie:
+    <strong>1–5</strong> =
+    Angriff / Annahme / Aufschlag / Block / Abwehr<br>
+
+    Ergebnis:
+    <strong>1–4</strong> entsprechend der Kategorie<br>
+
+    Gegnerischer Fehler:
+    <strong>0 → 1–6</strong>
+
+  </div>
+
+  `;
+}
+
+/* ---------------- GAMES ---------------- */
+
+function gamesUI(){
+
+  const t=team();
+
+  return `
+
+  <div class="between">
+
+    <div>
+
+      <h2>Spiele</h2>
+
+      <p class="help">
+        ${t.games.length} gespeicherte Spiele
+      </p>
+
+    </div>
+
+    <button
+      class="btn primary"
+      onclick="createGame()"
+    >
+      + Neues Spiel
+    </button>
+
+  </div>
+
+  ${
+    t.games.length
+
+    ?
+
+    t.games.map(g=>{
+
+      const us=
+        g.sets.filter(s=>s.us>s.opp).length;
+
+      const opp=
+        g.sets.filter(s=>s.opp>s.us).length;
+
+      return `
+
+      <div class="card">
+
+        <div class="between">
+
+          <div>
+
+            <h3>${esc(g.opponent)}</h3>
+
+            <div class="help">
+              ${esc(g.date)}
+              ·
+              ${g.finished?"Beendet":"Laufend"}
+            </div>
+
+          </div>
+
+          <strong>
+            ${us}:${opp}
+          </strong>
+
+        </div>
+
+        <div class="flex">
+
+          <button
+            class="btn primary"
+            onclick="openGame('${g.id}')"
+          >
+            Öffnen
+          </button>
+
+          <button
+            class="btn"
+            onclick="
+              db.currentGame='${g.id}';
+              state.page='analysis';
+              save();
+              render();
+            "
+          >
+            Analyse
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteGame('${g.id}')"
+          >
+            Löschen
+          </button>
+
+        </div>
+
+      </div>
+
+      `;
+
+    }).join("")
+
+    :
+
+    `
+    <div class="card empty">
+      Noch keine Spiele vorhanden.
+    </div>
+    `
+  }
+
+  `;
+}
+
+/* ---------------- ROSTER ---------------- */
+
+function formatKey(key){
+
+  if(!key) return "–";
+
+  if(key<=9) return String(key);
+
+  return "Shift+"+(key-9);
+}
+
+function keyAvailable(key,ignoreId=null){
+
+  if(!key) return true;
+
+  return !team().players.some(p=>
+    p.id!==ignoreId &&
+    Number(p.scoutingKey)===Number(key)
+  );
+}
+
+function rosterUI(){
+
+  const t=team();
+
+  return `
+
+  <div class="between">
+
+    <div>
+
+      <h2>Kader</h2>
+
+      <p class="help">
+        ${t.players.length} Spieler
+      </p>
+
+    </div>
+
+    <button
+      class="btn primary"
+      onclick="addPlayer()"
+    >
+      + Spieler
+    </button>
+
+  </div>
+
+  <div class="notice">
+
+    <strong>Scouting-Taste:</strong>
+
+    Diese Taste wird später für die Numpad-Steuerung verwendet.
+    Jede Taste darf nur einmal vergeben werden.
+
+    <br><br>
+
+    <strong>1–9</strong> = normale Zahl ·
+    <strong>10–14</strong> = Shift+1 bis Shift+5
+
+  </div>
+
+  <div class="card">
+
+    ${
+      t.players.length
+
+      ?
+
+      `
+
+      <div class="scroll">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Scouting</th>
+              <th>#</th>
+              <th>Name</th>
+              <th>Position</th>
+              <th></th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              [...t.players]
+              .sort((a,b)=>
+                Number(a.scoutingKey||99)-
+                Number(b.scoutingKey||99)
+              )
+              .map(p=>`
+
+                <tr>
+
+                  <td>
+                    <span class="keyBadge">
+                      ${formatKey(p.scoutingKey)}
+                    </span>
+                  </td>
+
+                  <td>
+                    ${esc(p.number||"")}
+                  </td>
+
+                  <td>
+                    ${esc(p.name)}
+                  </td>
+
+                  <td>
+                    ${esc(p.position||"")}
+                  </td>
+
+                  <td>
+
+                    <button
+                      class="btn small"
+                      onclick="editPlayer('${p.id}')"
+                    >
+                      Bearbeiten
+                    </button>
+
+                    <button
+                      class="btn small red"
+                      onclick="deletePlayer('${p.id}')"
+                    >
+                      Löschen
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              `).join("")
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      `
+
+      :
+
+      `
+      <div class="empty">
+        Noch keine Spieler angelegt.
+      </div>
+      `
+    }
+
+  </div>
+
+  <div class="card">
+
+    <h3>Teamverwaltung</h3>
+
+    <div class="flex">
+
+      <button
+        class="btn primary"
+        onclick="addTeam()"
+      >
+        + Team hinzufügen
+      </button>
+
+      <button
+        class="btn"
+        onclick="exportJSON()"
+      >
+        Daten exportieren
+      </button>
+
+      <label
+        class="btn"
+        style="cursor:pointer"
+      >
+        Daten importieren
+
+        <input
+          type="file"
+          accept=".json"
+          style="display:none"
+          onchange="importJSON(this.files[0])"
+        >
+
+      </label>
+
+    </div>
+
+  </div>
+
+  `;
+}
+
+function addPlayer(){
+
+  const t=team();
+
+  const name=prompt("Name des Spielers:");
+
+  if(!name) return;
+
+  const number=prompt("Trikotnummer:");
+
+  const keyInput=prompt(
+    "Scouting-Taste (1–14):\n\n" +
+    "1–9 = Zahl\n" +
+    "10–14 = Shift+1 bis Shift+5"
+  );
+
+  const key=Number(keyInput);
+
+  if(
+    !Number.isInteger(key) ||
+    key<1 ||
+    key>14
+  ){
+
+    alert("Bitte eine Scouting-Taste von 1 bis 14 eingeben.");
+
+    return;
+  }
+
+  if(!keyAvailable(key)){
+
+    alert(
+      "Diese Scouting-Taste ist bereits vergeben."
+    );
+
+    return;
+  }
+
+  if(
+    number &&
+    t.players.some(p=>
+      String(p.number)===String(number)
+    )
+  ){
+
+    alert(
+      "Diese Trikotnummer ist bereits vergeben."
+    );
+
+    return;
+  }
+
+  const position=prompt(
+    "Position:",
+    "Außen"
+  ) || "";
+
+  t.players.push({
+
+    id:id(),
+
+    name,
+
+    number,
+
+    position,
+
+    scoutingKey:key
+  });
+
+  save();
+
+  render();
+}
+
+function editPlayer(pid){
+
+  const t=team();
+
+  const p=t.players.find(x=>x.id===pid);
+
+  if(!p) return;
+
+  const name=prompt(
+    "Name:",
+    p.name
+  );
+
+  if(!name) return;
+
+  const number=prompt(
+    "Trikotnummer:",
+    p.number||""
+  );
+
+  if(
+    number &&
+    t.players.some(x=>
+      x.id!==pid &&
+      String(x.number)===String(number)
+    )
+  ){
+
+    alert(
+      "Diese Trikotnummer ist bereits vergeben."
+    );
+
+    return;
+  }
+
+  const keyInput=prompt(
+    "Scouting-Taste (1–14):",
+    p.scoutingKey||""
+  );
+
+  const key=Number(keyInput);
+
+  if(
+    !Number.isInteger(key) ||
+    key<1 ||
+    key>14
+  ){
+
+    alert(
+      "Bitte eine Scouting-Taste von 1 bis 14 eingeben."
+    );
+
+    return;
+  }
+
+  if(!keyAvailable(key,pid)){
+
+    alert(
+      "Diese Scouting-Taste ist bereits vergeben."
+    );
+
+    return;
+  }
+
+  const position=prompt(
+    "Position:",
+    p.position||""
+  );
+
+  p.name=name;
+  p.number=number;
+  p.scoutingKey=key;
+  p.position=position||"";
+
+  save();
+
+  render();
+}
+
+function deletePlayer(pid){
+
+  const t=team();
+
+  if(!confirm("Spieler wirklich löschen?")) return;
+
+  t.players=t.players.filter(p=>p.id!==pid);
+
+  t.games.forEach(g=>{
+
+    g.lineup=
+      g.lineup.filter(x=>x!==pid);
+
+    g.bench=
+      g.bench.filter(x=>x!==pid);
+
+    Object.keys(g.lineups||{}).forEach(s=>{
+
+      g.lineups[s]=
+        g.lineups[s].filter(x=>x!==pid);
+
+    });
+
+  });
+
+  save();
+
+  render();
+}
+
+function addTeam(){
+
+  const name=prompt("Teamname:");
+
+  if(!name) return;
+
+  const t={
+
+    id:id(),
+
+    name,
+
+    players:[],
+
+    games:[]
+  };
+
+  db.teams.push(t);
+
+  db.currentTeam=t.id;
+  db.currentGame=null;
+
+  save();
+
+  render();
+}
+
+/* ---------------- ANALYSIS ---------------- */
+
+function analysisUI(){
+
+  const g=game();
+
+  if(!g){
+
+    return `
+      <div class="card empty">
+        Kein Spiel ausgewählt.
+      </div>
+    `;
+  }
+
+  const t=team();
+
+  const overall=stats(g);
+
+  const tabs=[
+
+    ["overall","Gesamt"],
+
+    ["sets","Sätze"],
+
+    ["players","Spieler"],
+
+    ["feeds","Zuspiel"],
+
+    ["actions","Aktionen"]
+
+  ];
+
+  return `
+
+  <div class="between">
+
+    <div>
+
+      <h2>Analyse</h2>
+
+      <p class="help">
+        ${esc(t.name)} vs. ${esc(g.opponent)}
+      </p>
+
+    </div>
+
+    <button
+      class="btn"
+      onclick="state.page='live';render()"
+    >
+      Zurück zum Live-Spiel
+    </button>
+
+  </div>
+
+  <div class="sectionTabs">
+
+    ${
+      tabs.map(tab=>`
+
+        <button
+          class="sectionTab ${
+            state.analysisTab===tab[0]
+            ?"active"
+            :""
+          }"
+          onclick="
+            state.analysisTab='${tab[0]}';
+            render()
+          "
+        >
+          ${tab[1]}
+        </button>
+
+      `).join("")
+    }
+
+  </div>
+
+  ${
+    state.analysisTab==="overall"
+    ? analysisOverall(g,overall)
+    : ""
+  }
+
+  ${
+    state.analysisTab==="sets"
+    ? analysisSets(g)
+    : ""
+  }
+
+  ${
+    state.analysisTab==="players"
+    ? analysisPlayers(g)
+    : ""
+  }
+
+  ${
+    state.analysisTab==="feeds"
+    ? analysisFeeds(g)
+    : ""
+  }
+
+  ${
+    state.analysisTab==="actions"
+    ? analysisActions(g)
+    : ""
+  }
+
+  `;
+}
+
+function analysisOverall(g,s){
+
+  return `
+
+  <div class="card">
+
+    <h3>Gesamtes Spiel</h3>
+
+    ${statsCards(s)}
+
+  </div>
+
+  <div class="card">
+
+    <h3>Detailwerte</h3>
+
+    <div class="scroll">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Bereich</th>
+            <th>Versuche</th>
+            <th>Erfolge</th>
+            <th>Quote</th>
+            <th>Fehler</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>Angriff</td>
+            <td>${s.attackN}</td>
+            <td>${s.attackK}</td>
+            <td>${fmt(s.attackRate)}%</td>
+            <td>${s.attackE+s.attackB}</td>
+          </tr>
+
+          <tr>
+            <td>Annahme</td>
+            <td>${s.recN}</td>
+            <td>${s.recP}</td>
+            <td>${fmt(s.receptionRate)}%</td>
+            <td>${s.recE}</td>
+          </tr>
+
+          <tr>
+            <td>Aufschlag</td>
+            <td>${s.serveN}</td>
+            <td>${s.aces}</td>
+            <td>${fmt(s.serveAceRate)}%</td>
+            <td>${s.serveE}</td>
+          </tr>
+
+          <tr>
+            <td>Block</td>
+            <td>${s.blockN}</td>
+            <td>${s.blockP}</td>
+            <td>${fmt(s.blockRate)}%</td>
+            <td>${s.blockE}</td>
+          </tr>
+
+          <tr>
+            <td>Abwehr</td>
+            <td>${s.defN}</td>
+            <td>${s.defS}</td>
+            <td>${fmt(s.defenseRate)}%</td>
+            <td>${s.defE}</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  `;
+}
+
+function analysisSets(g){
+
+  const completed=g.sets.map(s=>s.set);
+
+  if(!g.finished && !completed.includes(g.currentSet)){
+    completed.push(g.currentSet);
+  }
+
+  return `
+
+  <div class="card">
+
+    <h3>Analyse jedes Satzes</h3>
+
+    <div class="scroll">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Satz</th>
+            <th>Spielstand</th>
+            <th>Angriff</th>
+            <th>Annahme</th>
+            <th>Abwehr</th>
+            <th>Asse</th>
+            <th>Blockpunkte</th>
+            <th>Aufschlagfehler</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            completed.map(setNo=>{
+
+              const s=stats(g,setNo);
+
+              const finished=
+                g.sets.find(x=>x.set===setNo);
+
+              const score=
+                finished
+                ? `${finished.us}:${finished.opp}`
+                : setNo===g.currentSet
+                ? `${g.scoreUs}:${g.scoreOpponent}`
+                : "-";
+
+              return `
+
+                <tr>
+
+                  <td>Satz ${setNo}</td>
+
+                  <td>${score}</td>
+
+                  <td>
+                    ${fmt(s.attackRate)}%
+                    (${s.attackK}/${s.attackN})
+                  </td>
+
+                  <td>
+                    ${fmt(s.receptionRate)}%
+                    (${s.recP}/${s.recN})
+                  </td>
+
+                  <td>
+                    ${fmt(s.defenseRate)}%
+                    (${s.defS}/${s.defN})
+                  </td>
+
+                  <td>${s.aces}</td>
+
+                  <td>${s.blockP}</td>
+
+                  <td>${s.serveE}</td>
+
+                </tr>
+
+              `;
+
+            }).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  `;
+}
+
+function analysisPlayers(g){
+
+  const t=team();
+
+  return `
+
+  <div class="card">
+
+    <h3>Spieler – Gesamt</h3>
+
+    <div class="scroll">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Scouting</th>
+            <th>Spieler</th>
+            <th>Angriff</th>
+            <th>Angriff %</th>
+            <th>Annahme</th>
+            <th>Annahme %</th>
+            <th>Aufschläge</th>
+            <th>Asse</th>
+            <th>Block</th>
+            <th>Abwehr</th>
+            <th>Abwehr %</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            t.players.map(p=>{
+
+              const s=
+                playerStats(g,p.id);
+
+              return `
+
+                <tr>
+
+                  <td>
+                    ${formatKey(p.scoutingKey)}
+                  </td>
+
+                  <td>
+                    ${esc(playerName(p.id))}
+                  </td>
+
+                  <td>
+                    ${s.attackK}/${s.attackN}
+                  </td>
+
+                  <td>
+                    ${fmt(s.attackRate)}%
+                  </td>
+
+                  <td>
+                    ${s.recP}/${s.recN}
+                  </td>
+
+                  <td>
+                    ${fmt(s.receptionRate)}%
+                  </td>
+
+                  <td>
+                    ${s.serveN}
+                  </td>
+
+                  <td>
+                    ${s.aces}
+                  </td>
+
+                  <td>
+                    ${s.blockP}
+                  </td>
+
+                  <td>
+                    ${s.defS}/${s.defN}
+                  </td>
+
+                  <td>
+                    ${fmt(s.defenseRate)}%
+                  </td>
+
+                </tr>
+
+              `;
+
+            }).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  ${
+    g.sets.length
+    ?
+
+    g.sets.map(set=>`
+
+      <div class="card">
+
+        <h3>
+          Spieleranalyse – Satz ${set.set}
+        </h3>
+
+        <div class="scroll">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Spieler</th>
+                <th>Angriff</th>
+                <th>Angriff %</th>
+                <th>Annahme</th>
+                <th>Annahme %</th>
+                <th>Aufschlag</th>
+                <th>Asse</th>
+                <th>Block</th>
+                <th>Abwehr %</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${
+                t.players.map(p=>{
+
+                  const s=
+                    playerStats(g,p.id,set.set);
+
+                  return `
+
+                    <tr>
+
+                      <td>
+                        ${esc(playerName(p.id))}
+                      </td>
+
+                      <td>
+                        ${s.attackK}/${s.attackN}
+                      </td>
+
+                      <td>
+                        ${fmt(s.attackRate)}%
+                      </td>
+
+                      <td>
+                        ${s.recP}/${s.recN}
+                      </td>
+
+                      <td>
+                        ${fmt(s.receptionRate)}%
+                      </td>
+
+                      <td>
+                        ${s.serveN}
+                      </td>
+
+                      <td>
+                        ${s.aces}
+                      </td>
+
+                      <td>
+                        ${s.blockP}
+                      </td>
+
+                      <td>
+                        ${fmt(s.defenseRate)}%
+                      </td>
+
+                    </tr>
+
+                  `;
+
+                }).join("")
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    ""
+  }
+
+  `;
+}
+
+function analysisFeeds(g){
+
+  const t=team();
+
+  const total=allFeeds(g);
+
+  return `
+
+  <div class="card">
+
+    <h3>Zuspielverteilung – Gesamt</h3>
+
+    <p class="help">
+      Manuell erfasste Zuspiele über alle Sätze.
+    </p>
+
+    <div class="scroll">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Spieler</th>
+
+            ${
+              Object.keys(g.setFeeds||{})
+              .map(s=>`<th>Satz ${s}</th>`)
+              .join("")
+            }
+
+            <th>Gesamt</th>
+            <th>Anteil</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            t.players.map(p=>{
+
+              const totalPlayer=
+                feedTotal(g,p.id);
+
+              const percent=
+                total
+                ? totalPlayer/total*100
+                : 0;
+
+              return `
+
+                <tr>
+
+                  <td>
+                    ${esc(playerName(p.id))}
+                  </td>
+
+                  ${
+                    Object.keys(g.setFeeds||{})
+                    .map(setNo=>`
+
+                      <td>
+                        ${
+                          Number(
+                            g.setFeeds[setNo]?.[p.id]||0
+                          )
+                        }
+                      </td>
+
+                    `).join("")
+                  }
+
+                  <td>
+                    <strong>
+                      ${totalPlayer}
+                    </strong>
+                  </td>
+
+                  <td>
+                    ${fmt(percent)}%
+                  </td>
+
+                </tr>
+
+              `;
+
+            }).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  ${
+    Object.keys(g.setFeeds||{})
+    .map(setNo=>{
+
+      const setData=g.setFeeds[setNo]||{};
+
+      const setTotal=
+        Object.values(setData)
+        .reduce((a,b)=>a+Number(b||0),0);
+
+      return `
+
+        <div class="card">
+
+          <h3>
+            Zuspielverteilung – Satz ${setNo}
+          </h3>
+
+          <div class="scroll">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Spieler</th>
+                  <th>Zuspiele</th>
+                  <th>Anteil</th>
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                ${
+                  t.players.map(p=>{
+
+                    const n=
+                      Number(setData[p.id]||0);
+
+                    const percent=
+                      setTotal
+                      ? n/setTotal*100
+                      : 0;
+
+                    return `
+
+                      <tr>
+
+                        <td>
+                          ${esc(playerName(p.id))}
+                        </td>
+
+                        <td>
+                          ${n}
+                        </td>
+
+                        <td>
+                          ${fmt(percent)}%
+                        </td>
+
+                      </tr>
+
+                    `;
+
+                  }).join("")
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("")
+  }
+
+  `;
+}
+
+function analysisActions(g){
+
+  return `
+
+  <div class="card">
+
+    <h3>Aktionsprotokoll</h3>
+
+    <div class="actionLog">
+
+      ${
+        g.actions.length
+
+        ?
+
+        [...g.actions]
+        .reverse()
+        .map(a=>{
+
+          const category=
+            a.category==="opponentError"
+            ? "Gegnerischer Fehler"
+            : categories[a.category]?.title
+              || a.category;
+
+          const result=
+            a.category==="opponentError"
+
+            ?
+
+            oppErrors.find(
+              x=>x[0]===a.result
+            )?.[1] || a.result
+
+            :
+
+            categories[a.category]
+            ?.results
+            ?.find(x=>x[0]===a.result)
+            ?.[1]
+            || a.result;
+
+          return `
+
+            <div class="logItem">
+
+              <strong>
+                Satz ${a.set}
+              </strong>
+
+              ·
+
+              ${
+                a.player
+                ? esc(playerName(a.player))
+                : "Gegner"
+              }
+
+              ·
+
+              ${esc(category)}
+
+              ·
+
+              ${esc(result)}
+
+            </div>
+
+          `;
+
+        }).join("")
+
+        :
+
+        `
+        <div class="empty">
+          Noch keine Aktionen.
+        </div>
+        `
+      }
+
+    </div>
+
+  </div>
+
+  `;
+}
+
+/* ---------------- KEYBOARD ---------------- */
+
+function keyToScoutingNumber(e){
+
+  /*
+    1–9 = 1–9
+    Shift+1 = 10
+    Shift+2 = 11
+    ...
+    Shift+5 = 14
+  */
+
+  if(
+    e.shiftKey &&
+    ["1","2","3","4","5"].includes(e.key)
+  ){
+
+    return 9+Number(e.key);
+  }
+
+  if(
+    ["1","2","3","4","5","6","7","8","9"]
+    .includes(e.key)
+  ){
+
+    return Number(e.key);
+  }
+
+  return null;
+}
+
+function findPlayerByScoutingKey(key){
+
+  return team().players.find(p=>
+    Number(p.scoutingKey)===Number(key)
+  );
+}
+
+document.addEventListener("keydown",e=>{
+
+  if(
+    e.target.tagName==="INPUT" ||
+    e.target.tagName==="TEXTAREA" ||
+    e.target.tagName==="SELECT"
+  ){
+
+    return;
+  }
+
+  const g=game();
+
+  if(!g || state.page!=="live"){
+    return;
+  }
+
+  /*
+    0 = Gegnerfehler-Modus
+  */
+
+  if(e.key==="0"){
+
+    state.opponentMode=true;
+
+    state.selectedPlayer=null;
+    state.selectedCategory=null;
+
+    render();
+
+    return;
+  }
+
+  /*
+    Gegnerfehler 1–6
+  */
+
+  if(state.opponentMode){
+
+    const n=Number(e.key);
+
+    if(n>=1 && n<=6){
+
+      opponentError(
+        oppErrors[n-1][0]
+      );
+
+    }
+
+    return;
+  }
+
+  /*
+    Spieler auswählen
+  */
+
+  if(!state.selectedPlayer){
+
+    const key=
+      keyToScoutingNumber(e);
+
+    if(key){
+
+      const p=
+        findPlayerByScoutingKey(key);
+
+      if(p){
+
+        selectPlayer(p.id);
+
+      }else{
+
+        alert(
+          `Keine Scouting-Taste ${formatKey(key)} vergeben.`
+        );
+
+      }
+
+      return;
+    }
+  }
+
+  /*
+    Kategorie
+  */
+
+  if(
+    state.selectedPlayer &&
+    !state.selectedCategory
+  ){
+
+    const n=Number(e.key);
+
+    if(n>=1 && n<=5){
+
+      const cat=
+        Object.keys(categories)[n-1];
+
+      selectCategory(cat);
+
+    }
+
+    return;
+  }
+
+  /*
+    Ergebnis
+  */
+
+  if(
+    state.selectedPlayer &&
+    state.selectedCategory
+  ){
+
+    const n=Number(e.key);
+
+    const results=
+      categories[state.selectedCategory].results;
+
+    if(n>=1 && n<=results.length){
+
+      record(
+        state.selectedCategory,
+        results[n-1][0],
+        state.selectedPlayer
+      );
+
+    }
+
+  }
+
+});
+
+/* ---------------- SELECTION ---------------- */
+
+function selectPlayer(pid){
+
+  state.opponentMode=false;
+
+  state.selectedPlayer=pid;
+
+  state.selectedCategory=null;
+
+  render();
+}
+
+function selectCategory(cat){
+
+  if(!state.selectedPlayer){
+
+    alert(
+      "Bitte zuerst einen Spieler auswählen."
+    );
+
+    return;
+  }
+
+  state.selectedCategory=cat;
+
+  render();
+}
+
+/* ---------------- DRAG & DROP ---------------- */
+
+let dragData=null;
+
+document.addEventListener("dragstart",e=>{
+
+  const bench=e.target.closest("[data-player]");
+
+  if(bench){
+
+    dragData={
+      type:"bench",
+      pid:bench.dataset.player
+    };
+
+    return;
+  }
+
+  const pos=e.target.closest("[data-pos]");
+
+  if(pos){
+
+    const g=game();
+
+    dragData={
+      type:"court",
+      index:Number(pos.dataset.pos),
+      pid:g?.lineup[
+        Number(pos.dataset.pos)
+      ]
+    };
+
+  }
+
+});
+
+document.addEventListener("dragover",e=>{
+
+  if(
+    e.target.closest("[data-pos]") ||
+    e.target.closest(".bench")
+  ){
+
+    e.preventDefault();
+  }
+
+});
+
+document.addEventListener("drop",e=>{
+
+  e.preventDefault();
+
+  const target=
+    e.target.closest("[data-pos]");
+
+  if(!dragData) return;
+
+  if(
+    dragData.type==="bench" &&
+    target
+  ){
+
+    substituteBench(
+      dragData.pid,
+      Number(target.dataset.pos)
+    );
+
+  }
+
+  else if(
+    dragData.type==="court" &&
+    target
+  ){
+
+    const b=
+      Number(target.dataset.pos);
+
+    if(dragData.index!==b){
+
+      swapPlayers(
+        dragData.index,
+        b
+      );
+
+    }
+
+  }
+
+  dragData=null;
+});
+
+/* ---------------- EXPORT ---------------- */
+
+function exportJSON(){
+
+  const blob=new Blob(
+    [JSON.stringify(db,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=
+    URL.createObjectURL(blob);
+
+  const a=
+    document.createElement("a");
+
+  a.href=url;
+
+  a.download=
+    "volleystats-backup.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importJSON(file){
+
+  if(!file) return;
+
+  const reader=
+    new FileReader();
+
+  reader.onload=()=>{
+
+    try{
+
+      const imported=
+        JSON.parse(reader.result);
+
+      if(
+        !imported.teams ||
+        !Array.isArray(imported.teams)
+      ){
+
+        throw new Error();
+      }
+
+      db=imported;
+
+      if(!db.currentTeam){
+
+        db.currentTeam=
+          db.teams[0]?.id;
+      }
+
+      /*
+        Alte Spieler ohne Scouting-Taste
+        werden nicht automatisch doppelt belegt.
+      */
+
+      db.teams.forEach(t=>{
+
+        t.players.forEach(p=>{
+
+          if(
+            !Number.isInteger(
+              Number(p.scoutingKey)
+            )
+          ){
+
+            p.scoutingKey=null;
+          }
+
+        });
+
+      });
+
+      save();
+
+      render();
+
+    }catch{
+
+      alert(
+        "Die Datei ist keine gültige VolleyStats-Datei."
+      );
+
+    }
+
+  };
+
+  reader.readAsText(file);
+}
+
+/* ---------------- RENDER ---------------- */
+
+function render(){
+
+  const select=
+    document.getElementById("teamSelect");
+
+  select.innerHTML=
+    db.teams.map(t=>`
+
+      <option
+        value="${t.id}"
+        ${t.id===db.currentTeam?"selected":""}
+      >
+        ${esc(t.name)}
+      </option>
+
+    `).join("");
+
+  document
+    .querySelectorAll("nav button")
+    .forEach(btn=>{
+
+      btn.classList.toggle(
+        "active",
+        btn.dataset.page===state.page
+      );
+
+    });
+
+  const app=
+    document.getElementById("app");
+
+  if(state.page==="live"){
+    app.innerHTML=liveUI();
+  }
+
+  if(state.page==="games"){
+    app.innerHTML=gamesUI();
+  }
+
+  if(state.page==="roster"){
+    app.innerHTML=rosterUI();
+  }
+
+  if(state.page==="analysis"){
+    app.innerHTML=analysisUI();
+  }
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
