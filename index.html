@@ -1,0 +1,4107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>VolleyStats</title>
+
+<style>
+:root{
+  --bg:#f3f5f8;
+  --card:#ffffff;
+  --text:#18202a;
+  --muted:#7b8490;
+  --line:#e2e6eb;
+  --primary:#111827;
+  --accent:#2563eb;
+  --accent2:#dbeafe;
+  --green:#16a34a;
+  --green2:#dcfce7;
+  --red:#dc2626;
+  --red2:#fee2e2;
+  --orange:#ea580c;
+  --orange2:#ffedd5;
+  --purple:#7c3aed;
+  --purple2:#ede9fe;
+  --radius:18px;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  max-width:1500px;
+  margin:auto;
+  min-height:100vh;
+}
+
+/* HEADER */
+
+header{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:14px 18px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.header-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.logo{
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-.7px;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.team-select{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  padding:9px 12px;
+  font-weight:700;
+}
+
+/* NAV */
+
+nav{
+  display:flex;
+  gap:5px;
+  padding:10px 14px;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto;
+}
+
+.nav-btn{
+  border:0;
+  background:transparent;
+  padding:10px 15px;
+  border-radius:12px;
+  font-weight:700;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.nav-btn.active{
+  background:#eef2f7;
+  color:var(--text);
+}
+
+/* GENERAL */
+
+main{
+  padding:18px;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.page-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.page-title h1{
+  margin:0;
+  font-size:25px;
+}
+
+.page-title p{
+  margin:4px 0 0;
+  color:var(--muted);
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:0 4px 16px rgba(0,0,0,.035);
+}
+
+.grid{
+  display:grid;
+  gap:15px;
+}
+
+.grid-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.grid-4{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 15px;
+  font-weight:800;
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:#fff;
+}
+
+.btn-blue{
+  background:var(--accent);
+  color:#fff;
+}
+
+.btn-light{
+  background:#eef1f5;
+  color:var(--text);
+}
+
+.btn-green{
+  background:var(--green);
+  color:#fff;
+}
+
+.btn-red{
+  background:var(--red);
+  color:#fff;
+}
+
+.btn-small{
+  padding:7px 10px;
+  font-size:13px;
+}
+
+input,select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:11px 12px;
+  background:#fff;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+/* HOME */
+
+.stat-card{
+  padding:17px;
+}
+
+.stat-label{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.stat-value{
+  font-size:27px;
+  font-weight:900;
+  margin-top:5px;
+}
+
+/* GAMES */
+
+.game-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.game-row:last-child{
+  border-bottom:0;
+}
+
+.game-main{
+  min-width:0;
+}
+
+.game-opponent{
+  font-size:17px;
+  font-weight:900;
+}
+
+.game-meta{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:3px;
+}
+
+.game-score{
+  font-size:20px;
+  font-weight:900;
+}
+
+.empty{
+  padding:30px 10px;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* LIVE */
+
+.live-top{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.team-score{
+  text-align:center;
+}
+
+.team-name{
+  font-size:14px;
+  font-weight:800;
+  color:var(--muted);
+}
+
+.big-score{
+  font-size:64px;
+  line-height:1;
+  font-weight:950;
+  margin:7px 0;
+}
+
+.set-score{
+  font-weight:900;
+  font-size:18px;
+}
+
+.live-center{
+  text-align:center;
+}
+
+.live-center .set-label{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+}
+
+.live-layout{
+  display:grid;
+  grid-template-columns:minmax(500px,1.5fr) minmax(340px,1fr);
+  gap:15px;
+}
+
+.court-card{
+  overflow:hidden;
+}
+
+.court{
+  width:100%;
+  max-width:680px;
+  aspect-ratio:1.65;
+  margin:15px auto;
+  background:#f6b45e;
+  border:4px solid #fff;
+  outline:2px solid #d08b32;
+  border-radius:8px;
+  position:relative;
+}
+
+.court::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:#fff;
+  transform:translateX(-50%);
+}
+
+.position{
+  position:absolute;
+  width:28%;
+  height:31%;
+  transform:translate(-50%,-50%);
+}
+
+.position[data-pos="4"]{left:20%;top:28%}
+.position[data-pos="3"]{left:50%;top:28%}
+.position[data-pos="2"]{left:80%;top:28%}
+.position[data-pos="5"]{left:20%;top:72%}
+.position[data-pos="6"]{left:50%;top:72%}
+.position[data-pos="1"]{left:80%;top:72%}
+
+.player-slot{
+  width:100%;
+  height:100%;
+  border-radius:15px;
+  background:#fff;
+  border:3px solid rgba(17,24,39,.12);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  box-shadow:0 5px 12px rgba(0,0,0,.12);
+  user-select:none;
+}
+
+.player-slot.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(37,99,235,.18);
+}
+
+.player-number{
+  font-size:21px;
+}
+
+.player-name{
+  font-size:12px;
+  max-width:95%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.position-number{
+  position:absolute;
+  top:-20px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:11px;
+  font-weight:900;
+  color:#fff;
+  background:rgba(0,0,0,.45);
+  padding:2px 7px;
+  border-radius:20px;
+}
+
+.bench{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
+.bench-player{
+  background:#eef1f5;
+  border:2px solid transparent;
+  border-radius:12px;
+  padding:9px 11px;
+  font-weight:800;
+  user-select:none;
+}
+
+.bench-player.selected{
+  border-color:var(--accent);
+  background:var(--accent2);
+}
+
+.action-panel{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.selected-info{
+  padding:12px;
+  background:#f4f6f8;
+  border-radius:13px;
+  font-weight:800;
+}
+
+.category-tabs{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:5px;
+}
+
+.category-btn{
+  border:0;
+  background:#eef1f5;
+  border-radius:10px;
+  padding:10px 5px;
+  font-weight:800;
+  font-size:12px;
+}
+
+.category-btn.active{
+  background:var(--primary);
+  color:#fff;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.result-btn{
+  min-height:55px;
+  border:0;
+  border-radius:12px;
+  background:#eef1f5;
+  font-weight:850;
+}
+
+.result-btn.good{
+  background:var(--green2);
+  color:#166534;
+}
+
+.result-btn.bad{
+  background:var(--red2);
+  color:#991b1b;
+}
+
+.result-btn.warn{
+  background:var(--orange2);
+  color:#9a3412;
+}
+
+.last-action{
+  padding:14px;
+  background:#f7f8fa;
+  border-radius:14px;
+}
+
+.last-action-title{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.last-action-text{
+  font-weight:900;
+}
+
+.action-feed{
+  max-height:260px;
+  overflow:auto;
+}
+
+.feed-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+
+.feed-row:last-child{
+  border-bottom:0;
+}
+
+.feed-points{
+  font-weight:900;
+}
+
+.undo{
+  width:100%;
+}
+
+.numpad-card{
+  margin-top:15px;
+}
+
+.numpad-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+}
+
+.key{
+  background:#eef1f5;
+  border-radius:9px;
+  padding:8px;
+  text-align:center;
+  font-weight:900;
+  font-size:12px;
+}
+
+/* ANALYSIS */
+
+.metric{
+  text-align:center;
+}
+
+.metric .number{
+  font-size:31px;
+  font-weight:950;
+}
+
+.metric .label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+
+.progress{
+  height:7px;
+  background:#edf0f3;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:8px;
+}
+
+.progress > div{
+  height:100%;
+  background:var(--accent);
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th,td{
+  padding:11px 9px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+td strong{
+  font-weight:900;
+}
+
+/* ROSTER */
+
+.roster-row{
+  display:grid;
+  grid-template-columns:60px 1fr 130px 100px auto;
+  align-items:center;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.roster-number{
+  font-size:21px;
+  font-weight:950;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:8px;
+  background:#eef1f5;
+  font-size:11px;
+  font-weight:900;
+}
+
+/* MODAL */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:500;
+}
+
+.modal-backdrop.show{
+  display:flex;
+}
+
+.modal{
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:22px;
+  padding:20px;
+}
+
+.modal h2{
+  margin-top:0;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:15px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+  .live-layout{
+    grid-template-columns:1fr;
+  }
+
+  .grid-4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid-3{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:650px){
+  main{
+    padding:11px;
+  }
+
+  .live-top{
+    gap:5px;
+  }
+
+  .big-score{
+    font-size:47px;
+  }
+
+  .live-layout{
+    display:block;
+  }
+
+  .action-panel{
+    margin-top:12px;
+  }
+
+  .category-tabs{
+    grid-template-columns:repeat(5,1fr);
+  }
+
+  .category-btn{
+    padding:9px 2px;
+    font-size:10px;
+  }
+
+  .roster-row{
+    grid-template-columns:45px 1fr auto;
+  }
+
+  .roster-row .position-col,
+  .roster-row .key-col{
+    display:none;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4{
+    grid-template-columns:1fr;
+  }
+
+  .page-title{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Volley<span>Stats</span></div>
+
+    <div class="header-actions">
+      <select id="teamSelector" class="team-select"></select>
+      <button class="btn btn-primary btn-small" onclick="openNewGame()">+ Spiel</button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" data-page="home">Übersicht</button>
+  <button class="nav-btn" data-page="live">Live</button>
+  <button class="nav-btn" data-page="games">Spiele</button>
+  <button class="nav-btn" data-page="roster">Kader</button>
+  <button class="nav-btn" data-page="season">Saison</button>
+</nav>
+
+<main>
+
+<!-- =========================
+     HOME
+========================= -->
+
+<section id="page-home" class="page active">
+
+  <div class="page-title">
+    <div>
+      <h1>Übersicht</h1>
+      <p>Deine Volleyball-Saison auf einen Blick.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openNewGame()">Neues Spiel</button>
+  </div>
+
+  <div id="homeStats" class="grid grid-4"></div>
+
+  <div class="card" style="margin-top:15px">
+    <h3>Letzte Spiele</h3>
+    <div id="homeGames"></div>
+  </div>
+
+</section>
+
+
+<!-- =========================
+     LIVE
+========================= -->
+
+<section id="page-live" class="page">
+
+  <div id="livePage"></div>
+
+</section>
+
+
+<!-- =========================
+     GAMES
+========================= -->
+
+<section id="page-games" class="page">
+
+  <div class="page-title">
+    <div>
+      <h1>Spiele</h1>
+      <p>Alle gespeicherten Spiele.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openNewGame()">+ Neues Spiel</button>
+  </div>
+
+  <div class="card">
+    <div id="gamesList"></div>
+  </div>
+
+</section>
+
+
+<!-- =========================
+     ROSTER
+========================= -->
+
+<section id="page-roster" class="page">
+
+  <div class="page-title">
+    <div>
+      <h1>Kader</h1>
+      <p>Spieler verwalten und Numpad-Tasten zuweisen.</p>
+    </div>
+
+    <button class="btn btn-primary" onclick="openPlayerModal()">+ Spieler</button>
+  </div>
+
+  <div class="card">
+    <div id="rosterList"></div>
+  </div>
+
+  <div class="card" style="margin-top:15px">
+    <h3>Numpad-Steuerung</h3>
+
+    <p class="muted">
+      Spieler zuerst auswählen, danach Kategorie und Ergebnis.
+    </p>
+
+    <div class="grid grid-3">
+
+      <div>
+        <strong>Spieler</strong>
+        <p class="muted">
+          1–9 = Spieler 1–9<br>
+          Shift+1 = Spieler 10<br>
+          Shift+2 = Spieler 11<br>
+          Shift+3 = Spieler 12<br>
+          Shift+4 = Spieler 13<br>
+          Shift+5 = Spieler 14
+        </p>
+      </div>
+
+      <div>
+        <strong>Kategorie</strong>
+        <p class="muted">
+          1 = Angriff<br>
+          2 = Annahme<br>
+          3 = Aufschlag<br>
+          4 = Block<br>
+          5 = Abwehr
+        </p>
+      </div>
+
+      <div>
+        <strong>Gegnerfehler</strong>
+        <p class="muted">
+          0 = Gegnerfehler-Modus<br>
+          danach 1–6 für den Fehler
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<!-- =========================
+     SEASON
+========================= -->
+
+<section id="page-season" class="page">
+
+  <div class="page-title">
+    <div>
+      <h1>Saison</h1>
+      <p>Gesamtübersicht über alle Spiele.</p>
+    </div>
+  </div>
+
+  <div id="seasonPage"></div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- =========================
+     NEW GAME MODAL
+========================= -->
+
+<div id="newGameModal" class="modal-backdrop">
+
+  <div class="modal">
+
+    <h2>Neues Spiel</h2>
+
+    <div class="field">
+      <label>Gegner</label>
+      <input id="newOpponent" placeholder="z. B. SV Musterstadt">
+    </div>
+
+    <div class="field">
+      <label>Datum</label>
+      <input id="newDate" type="date">
+    </div>
+
+    <div class="field">
+      <label>Wer schlägt zu Beginn auf?</label>
+
+      <select id="newServing">
+        <option value="us">Wir</option>
+        <option value="opponent">Gegner</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Regel</label>
+
+      <select id="newMatchRule">
+        <option value="bestof5">Best of 5</option>
+        <option value="bestof3">Best of 3</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-light" onclick="closeModal('newGameModal')">
+        Abbrechen
+      </button>
+
+      <button class="btn btn-primary" onclick="createGame()">
+        Spiel starten
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- =========================
+     PLAYER MODAL
+========================= -->
+
+<div id="playerModal" class="modal-backdrop">
+
+  <div class="modal">
+
+    <h2 id="playerModalTitle">Spieler hinzufügen</h2>
+
+    <input type="hidden" id="playerEditId">
+
+    <div class="field">
+      <label>Name</label>
+      <input id="playerName" placeholder="Vorname Nachname">
+    </div>
+
+    <div class="field">
+      <label>Trikotnummer</label>
+      <input id="playerNumber" type="number" min="0" max="99">
+    </div>
+
+    <div class="field">
+      <label>Position</label>
+
+      <select id="playerPosition">
+        <option>Außenangriff</option>
+        <option>Diagonal</option>
+        <option>Zuspiel</option>
+        <option>Mittelblock</option>
+        <option>Libero</option>
+        <option>Universal</option>
+      </select>
+
+    </div>
+
+    <div class="field">
+      <label>Numpad-Spielertaste</label>
+
+      <select id="playerKey">
+        <option value="">Keine</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">Shift+1</option>
+        <option value="11">Shift+2</option>
+        <option value="12">Shift+3</option>
+        <option value="13">Shift+4</option>
+        <option value="14">Shift+5</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn btn-light" onclick="closeModal('playerModal')">
+        Abbrechen
+      </button>
+
+      <button class="btn btn-primary" onclick="savePlayer()">
+        Speichern
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- =========================
+     DISTRIBUTION MODAL
+========================= -->
+
+<div id="distributionModal" class="modal-backdrop">
+
+  <div class="modal">
+
+    <h2>Zuspielverteilung</h2>
+
+    <p class="muted">
+      Trage nach dem Satz ein, wie viele Zuspiele auf die einzelnen Angriffspositionen gingen.
+    </p>
+
+    <div class="grid grid-2">
+
+      <div class="field">
+        <label>Außen links</label>
+        <input id="distOH1" type="number" min="0" value="0">
+      </div>
+
+      <div class="field">
+        <label>Außen rechts</label>
+        <input id="distOH2" type="number" min="0" value="0">
+      </div>
+
+      <div class="field">
+        <label>Diagonal</label>
+        <input id="distOPP" type="number" min="0" value="0">
+      </div>
+
+      <div class="field">
+        <label>Mitte</label>
+        <input id="distMB" type="number" min="0" value="0">
+      </div>
+
+      <div class="field">
+        <label>Pipe</label>
+        <input id="distPipe" type="number" min="0" value="0">
+      </div>
+
+      <div class="field">
+        <label>Sonstige</label>
+        <input id="distOther" type="number" min="0" value="0">
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn btn-light" onclick="closeModal('distributionModal')">
+        Später
+      </button>
+
+      <button class="btn btn-primary" onclick="saveDistribution()">
+        Speichern
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+
+/* ============================================================
+   DATEN
+============================================================ */
+
+const STORAGE_KEY = "volleystats_final_v1";
+
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+
+  teams: {
+    "Damen": {
+      players: [],
+      games: []
+    }
+  },
+
+  activeTeam: "Damen",
+  activeGameId: null,
+
+  ui: {
+    page: "home"
+  }
+
+};
+
+
+/* ============================================================
+   SPEICHERN
+============================================================ */
+
+function saveData(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* ============================================================
+   HILFSFUNKTIONEN
+============================================================ */
+
+function id(){
+
+  return Date.now().toString(36) +
+         Math.random().toString(36).slice(2);
+
+}
+
+
+function today(){
+
+  return new Date().toISOString().slice(0,10);
+
+}
+
+
+function team(){
+
+  return data.teams[data.activeTeam];
+
+}
+
+
+function activeGame(){
+
+  if(!data.activeGameId) return null;
+
+  return team().games.find(
+    g => g.id === data.activeGameId
+  ) || null;
+
+}
+
+
+function playerById(pid){
+
+  return team().players.find(
+    p => p.id === pid
+  );
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function pct(a,b){
+
+  if(!b) return 0;
+
+  return Math.round((a/b)*100);
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+document.querySelectorAll(".nav-btn").forEach(btn => {
+
+  btn.addEventListener("click",()=>{
+
+    showPage(btn.dataset.page);
+
+  });
+
+});
+
+
+function showPage(page){
+
+  data.ui.page = page;
+
+  document.querySelectorAll(".page")
+    .forEach(p => p.classList.remove("active"));
+
+  document
+    .getElementById("page-"+page)
+    .classList.add("active");
+
+  document.querySelectorAll(".nav-btn")
+    .forEach(b =>
+      b.classList.toggle(
+        "active",
+        b.dataset.page === page
+      )
+    );
+
+  render();
+
+}
+
+
+/* ============================================================
+   TEAM SELECTOR
+============================================================ */
+
+function renderTeamSelector(){
+
+  const select =
+    document.getElementById("teamSelector");
+
+  select.innerHTML =
+    Object.keys(data.teams)
+      .map(t =>
+        `<option value="${escapeHTML(t)}"
+          ${t===data.activeTeam?"selected":""}>
+          ${escapeHTML(t)}
+        </option>`
+      )
+      .join("");
+
+}
+
+
+document
+  .getElementById("teamSelector")
+  .addEventListener("change",e=>{
+
+    data.activeTeam = e.target.value;
+    data.activeGameId = null;
+
+    saveData();
+    render();
+
+  });
+
+
+/* ============================================================
+   HOME
+============================================================ */
+
+function renderHome(){
+
+  const games = team().games;
+
+  const played =
+    games.filter(g=>g.finished).length;
+
+  const wins =
+    games.filter(g=>g.result==="win").length;
+
+  const losses =
+    games.filter(g=>g.result==="loss").length;
+
+  const winRate =
+    pct(wins,played);
+
+  document.getElementById("homeStats").innerHTML = `
+
+    <div class="card stat-card">
+      <div class="stat-label">Spiele</div>
+      <div class="stat-value">${played}</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-label">Siege</div>
+      <div class="stat-value">${wins}</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-label">Niederlagen</div>
+      <div class="stat-value">${losses}</div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-label">Siegquote</div>
+      <div class="stat-value">${winRate}%</div>
+    </div>
+
+  `;
+
+  const recent =
+    [...games]
+      .sort((a,b)=>b.createdAt-a.createdAt)
+      .slice(0,5);
+
+  document.getElementById("homeGames").innerHTML =
+    recent.length
+      ? recent.map(gameRowHTML).join("")
+      : `<div class="empty">Noch keine Spiele vorhanden.</div>`;
+
+}
+
+
+/* ============================================================
+   GAMES
+============================================================ */
+
+function gameRowHTML(g){
+
+  const sets =
+    g.sets.map(s=>`${s.ourScore}:${s.opponentScore}`).join(" · ");
+
+  return `
+
+    <div class="game-row">
+
+      <div class="game-main">
+
+        <div class="game-opponent">
+          ${escapeHTML(g.opponent)}
+        </div>
+
+        <div class="game-meta">
+          ${escapeHTML(g.date)}
+          · ${g.finished ? "beendet" : "läuft"}
+        </div>
+
+      </div>
+
+      <div class="game-score">
+        ${sets || "—"}
+      </div>
+
+      <div>
+
+        ${
+          g.finished
+
+          ? `<button class="btn btn-light btn-small"
+               onclick="openGame('${g.id}')">
+               Analyse
+             </button>`
+
+          : `<button class="btn btn-blue btn-small"
+               onclick="openGame('${g.id}')">
+               Fortsetzen
+             </button>`
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function renderGames(){
+
+  const games =
+    [...team().games]
+      .sort((a,b)=>b.createdAt-a.createdAt);
+
+  document.getElementById("gamesList").innerHTML =
+    games.length
+      ? games.map(gameRowHTML).join("")
+      : `<div class="empty">Noch keine Spiele vorhanden.</div>`;
+
+}
+
+
+/* ============================================================
+   NEUES SPIEL
+============================================================ */
+
+function openNewGame(){
+
+  document.getElementById("newOpponent").value="";
+  document.getElementById("newDate").value=today();
+  document.getElementById("newServing").value="us";
+  document.getElementById("newMatchRule").value="bestof5";
+
+  openModal("newGameModal");
+
+}
+
+
+function createGame(){
+
+  const opponent =
+    document.getElementById("newOpponent").value.trim();
+
+  if(!opponent){
+
+    alert("Bitte einen Gegner eingeben.");
+    return;
+
+  }
+
+  const game = {
+
+    id:id(),
+
+    opponent,
+
+    date:
+      document.getElementById("newDate").value || today(),
+
+    servingTeam:
+      document.getElementById("newServing").value,
+
+    rule:
+      document.getElementById("newMatchRule").value,
+
+    createdAt:Date.now(),
+
+    finished:false,
+
+    result:null,
+
+    sets:[],
+
+    currentSet:0
+
+  };
+
+  addSet(game);
+
+  team().games.push(game);
+
+  data.activeGameId=game.id;
+
+  saveData();
+
+  closeModal("newGameModal");
+
+  showPage("live");
+
+}
+
+
+function addSet(game){
+
+  game.sets.push({
+
+    number:game.sets.length+1,
+
+    ourScore:0,
+
+    opponentScore:0,
+
+    servingTeam:game.servingTeam,
+
+    actions:[],
+
+    lastAction:null,
+
+    distribution:null,
+
+    rotation:{
+
+      1:null,
+      2:null,
+      3:null,
+      4:null,
+      5:null,
+      6:null
+    },
+
+    selectedPlayer:null,
+    selectedCategory:null
+
+  });
+
+  game.currentSet=game.sets.length-1;
+
+}
+
+
+/* ============================================================
+   SPIEL ÖFFNEN
+============================================================ */
+
+function openGame(gameId){
+
+  data.activeGameId=gameId;
+
+  const g=activeGame();
+
+  if(g.finished){
+
+    showPage("games");
+    renderFinishedGame();
+
+  }else{
+
+    showPage("live");
+
+  }
+
+}
+
+
+/* ============================================================
+   LIVE
+============================================================ */
+
+function currentSet(){
+
+  const g=activeGame();
+
+  if(!g) return null;
+
+  return g.sets[g.currentSet];
+
+}
+
+
+function renderLive(){
+
+  const container =
+    document.getElementById("livePage");
+
+  const g=activeGame();
+
+  if(!g){
+
+    container.innerHTML=`
+
+      <div class="card empty">
+        <h2>Kein aktives Spiel</h2>
+        <button class="btn btn-primary"
+                onclick="openNewGame()">
+          Neues Spiel starten
+        </button>
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  if(g.finished){
+
+    renderFinishedGame();
+    return;
+
+  }
+
+  const s=currentSet();
+
+  container.innerHTML=`
+
+    <div class="page-title">
+
+      <div>
+        <h1>${escapeHTML(g.opponent)}</h1>
+        <p>
+          ${escapeHTML(g.date)}
+          · Satz ${s.number}
+        </p>
+      </div>
+
+      <button class="btn btn-light"
+              onclick="finishGameManually()">
+        Spiel beenden
+      </button>
+
+    </div>
+
+
+    <div class="live-top card">
+
+      <div class="team-score">
+
+        <div class="team-name">
+          ${escapeHTML(data.activeTeam)}
+        </div>
+
+        <div class="big-score">
+          ${s.ourScore}
+        </div>
+
+        <div class="set-score">
+          Sätze ${ourSetsWon(g)} : ${oppSetsWon(g)}
+        </div>
+
+      </div>
+
+
+      <div class="live-center">
+
+        <div class="set-label">
+          SATZ ${s.number}
+        </div>
+
+        <div style="font-size:13px;margin-top:8px">
+          Aufschlag:
+          <strong>
+            ${s.servingTeam==="us"
+              ? escapeHTML(data.activeTeam)
+              : escapeHTML(g.opponent)}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="team-score">
+
+        <div class="team-name">
+          ${escapeHTML(g.opponent)}
+        </div>
+
+        <div class="big-score">
+          ${s.opponentScore}
+        </div>
+
+        <div class="set-score">
+          Best of ${g.rule==="bestof5" ? 5 : 3}
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="live-layout">
+
+      <div>
+
+        <div class="card court-card">
+
+          <h3>Aufstellung</h3>
+
+          <p class="muted">
+            Spieler aus der Bank auf eine Position ziehen.
+            Spieler auf dem Feld können ebenfalls verschoben werden.
+          </p>
+
+          ${renderCourt(s)}
+
+          <h4>Bank</h4>
+
+          <div class="bench">
+            ${renderBench(s)}
+          </div>
+
+        </div>
+
+
+        <div class="card" style="margin-top:15px">
+
+          <h3>Aktueller Satz</h3>
+
+          ${renderCurrentSetAnalysis(s)}
+
+        </div>
+
+      </div>
+
+
+      <div class="action-panel">
+
+        <div class="card">
+
+          <div class="selected-info">
+
+            ${
+              s.selectedPlayer
+              ? `Ausgewählt:
+                 <strong>
+                 ${escapeHTML(
+                   playerById(s.selectedPlayer)?.name || ""
+                 )}
+                 </strong>`
+              : "Spieler auswählen"
+            }
+
+          </div>
+
+
+          <div class="category-tabs" style="margin-top:10px">
+
+            ${categoryButton("attack","Angriff",1)}
+            ${categoryButton("reception","Annahme",2)}
+            ${categoryButton("serve","Aufschlag",3)}
+            ${categoryButton("block","Block",4)}
+            ${categoryButton("defense","Abwehr",5)}
+
+          </div>
+
+
+          <div style="margin-top:10px">
+
+            ${renderResults(s)}
+
+          </div>
+
+
+          <button class="btn btn-light undo"
+                  onclick="undoLastAction()"
+                  style="margin-top:10px">
+            ↩ Letzte Aktion rückgängig
+          </button>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="last-action">
+
+            <div class="last-action-title">
+              LETZTE AKTION
+            </div>
+
+            <div class="last-action-text">
+              ${
+                s.lastAction
+                ? escapeHTML(s.lastAction.text)
+                : "Noch keine Aktion"
+              }
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>Aktionen</h3>
+
+          <div class="action-feed">
+            ${
+              s.actions.length
+              ? [...s.actions]
+                  .slice(-15)
+                  .reverse()
+                  .map(actionFeedHTML)
+                  .join("")
+              : `<div class="empty">Noch keine Aktionen.</div>`
+            }
+          </div>
+
+        </div>
+
+
+        <div class="card numpad-card">
+
+          <h3>Numpad</h3>
+
+          <div class="numpad-grid">
+
+            <div class="key">1–9<br>Spieler</div>
+            <div class="key">Shift+1<br>10</div>
+            <div class="key">Shift+2<br>11</div>
+            <div class="key">Shift+3<br>12</div>
+            <div class="key">Shift+4/5<br>13/14</div>
+
+            <div class="key">1<br>Angriff</div>
+            <div class="key">2<br>Annahme</div>
+            <div class="key">3<br>Aufschlag</div>
+            <div class="key">4<br>Block</div>
+            <div class="key">5<br>Abwehr</div>
+
+            <div class="key">0<br>Gegnerfehler</div>
+            <div class="key">1–6<br>Fehlerart</div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   COURT
+============================================================ */
+
+function renderCourt(s){
+
+  const positions=[4,3,2,5,6,1];
+
+  return `
+
+    <div class="court">
+
+      ${
+        positions.map(pos=>{
+
+          const pid=s.rotation[pos];
+
+          return `
+
+            <div class="position"
+                 data-pos="${pos}"
+                 ondragover="event.preventDefault()"
+                 ondrop="dropOnPosition(event,${pos})">
+
+              <div class="position-number">
+                ${pos}
+              </div>
+
+              ${
+                pid
+                ? renderFieldPlayer(pid,s)
+                : `
+                  <div class="player-slot"
+                       style="opacity:.45">
+                    +
+                  </div>
+                `
+              }
+
+            </div>
+
+          `;
+
+        }).join("")
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+function renderFieldPlayer(pid,s){
+
+  const p=playerById(pid);
+
+  if(!p) return "";
+
+  return `
+
+    <div class="player-slot
+                ${s.selectedPlayer===pid?"selected":""}"
+         draggable="true"
+         ondragstart="dragPlayer(event,'${pid}')"
+         onclick="selectPlayer('${pid}')">
+
+      <div class="player-number">
+        ${escapeHTML(p.number)}
+      </div>
+
+      <div class="player-name">
+        ${escapeHTML(p.name)}
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function renderBench(s){
+
+  const onCourt =
+    Object.values(s.rotation).filter(Boolean);
+
+  const players =
+    team().players.filter(
+      p=>!onCourt.includes(p.id)
+    );
+
+  if(!players.length){
+
+    return `<span class="muted">Keine Spieler auf der Bank.</span>`;
+
+  }
+
+  return players.map(p=>`
+
+    <div class="bench-player
+         ${s.selectedPlayer===p.id?"selected":""}"
+         draggable="true"
+         ondragstart="dragPlayer(event,'${p.id}')"
+         onclick="selectPlayer('${p.id}')">
+
+      #${escapeHTML(p.number)}
+      ${escapeHTML(p.name)}
+
+    </div>
+
+  `).join("");
+
+}
+
+
+/* ============================================================
+   DRAG & DROP
+============================================================ */
+
+let draggedPlayerId=null;
+
+
+function dragPlayer(event,pid){
+
+  draggedPlayerId=pid;
+
+  event.dataTransfer.setData(
+    "text/plain",
+    pid
+  );
+
+}
+
+
+function dropOnPosition(event,pos){
+
+  event.preventDefault();
+
+  const pid =
+    event.dataTransfer.getData("text/plain")
+    || draggedPlayerId;
+
+  if(!pid) return;
+
+  placePlayer(pos,pid);
+
+}
+
+
+function placePlayer(pos,pid){
+
+  const s=currentSet();
+
+  const oldPos =
+    Object.keys(s.rotation)
+      .find(
+        p=>s.rotation[p]===pid
+      );
+
+  const oldPlayer=s.rotation[pos];
+
+  if(oldPos){
+
+    if(oldPlayer && oldPlayer!==pid){
+
+      s.rotation[oldPos]=oldPlayer;
+
+    }else{
+
+      s.rotation[oldPos]=null;
+
+    }
+
+  }
+
+  s.rotation[pos]=pid;
+
+  saveData();
+  render();
+
+}
+
+
+/* ============================================================
+   SPIELER AUSWÄHLEN
+============================================================ */
+
+function selectPlayer(pid){
+
+  const s=currentSet();
+
+  s.selectedPlayer=pid;
+
+  saveData();
+  render();
+
+}
+
+
+/* ============================================================
+   KATEGORIEN
+============================================================ */
+
+const categories = {
+
+  attack:{
+    label:"Angriff",
+    results:[
+      ["kill","Punkt","good"],
+      ["playable","Spielbar","warn"],
+      ["error","Fehler","bad"],
+      ["blocked","Geblockt","bad"]
+    ]
+  },
+
+  reception:{
+    label:"Annahme",
+    results:[
+      ["positive","Positiv","good"],
+      ["playable","Spielbar","warn"],
+      ["error","Fehler","bad"]
+    ]
+  },
+
+  serve:{
+    label:"Aufschlag",
+    results:[
+      ["ace","Ass","good"],
+      ["pressure","Druck","warn"],
+      ["normal","Normal",""],
+      ["error","Fehler","bad"]
+    ]
+  },
+
+  block:{
+    label:"Block",
+    results:[
+      ["point","Punkt","good"],
+      ["touch","Touch","warn"],
+      ["error","Fehler","bad"]
+    ]
+  },
+
+  defense:{
+    label:"Abwehr",
+    results:[
+      ["successful","Erfolgreich","good"],
+      ["playable","Spielbar","warn"],
+      ["error","Fehler","bad"]
+    ]
+  }
+
+};
+
+
+function categoryButton(key,label,keyNum){
+
+  const s=currentSet();
+
+  return `
+
+    <button class="category-btn
+      ${s.selectedCategory===key?"active":""}"
+      onclick="selectCategory('${key}')">
+
+      ${keyNum}<br>${label}
+
+    </button>
+
+  `;
+
+}
+
+
+function selectCategory(category){
+
+  const s=currentSet();
+
+  s.selectedCategory=category;
+
+  saveData();
+  render();
+
+}
+
+
+/* ============================================================
+   RESULTATE
+============================================================ */
+
+function renderResults(s){
+
+  if(!s.selectedCategory){
+
+    return `
+      <div class="empty">
+        Erst Spieler und Kategorie auswählen.
+      </div>
+    `;
+
+  }
+
+  const cat=categories[s.selectedCategory];
+
+  return `
+
+    <div class="result-grid">
+
+      ${
+        cat.results.map(
+          r=>`
+
+            <button class="result-btn ${r[2]}"
+                    onclick="recordAction(
+                      '${s.selectedCategory}',
+                      '${r[0]}'
+                    )">
+
+              ${escapeHTML(r[1])}
+
+            </button>
+
+          `
+        ).join("")
+      }
+
+    </div>
+
+    <button class="btn btn-light"
+            style="width:100%;margin-top:8px"
+            onclick="openOpponentErrors()">
+
+      Gegnerfehler
+
+    </button>
+
+  `;
+
+}
+
+
+/* ============================================================
+   AKTION AUFZEICHNEN
+============================================================ */
+
+function recordAction(category,result){
+
+  const g=activeGame();
+  const s=currentSet();
+
+  if(!s.selectedPlayer){
+
+    alert("Bitte zuerst einen Spieler auswählen.");
+    return;
+
+  }
+
+  const p=playerById(s.selectedPlayer);
+
+  const action={
+
+    id:id(),
+    time:Date.now(),
+
+    playerId:p.id,
+    category,
+    result,
+
+    ourScoreBefore:s.ourScore,
+    opponentScoreBefore:s.opponentScore,
+
+    servingBefore:s.servingTeam,
+
+    text:
+      `${p.name}: ${categories[category].label} – ${resultLabel(category,result)}`
+
+  };
+
+  s.actions.push(action);
+
+  applyPointForPlayerAction(g,s,category,result);
+
+  s.lastAction=action;
+
+  s.selectedCategory=null;
+
+  saveData();
+
+  checkSetEnd();
+
+  render();
+
+}
+
+
+function resultLabel(category,result){
+
+  const r=
+    categories[category].results
+      .find(x=>x[0]===result);
+
+  return r ? r[1] : result;
+
+}
+
+
+/* ============================================================
+   PUNKTLOGIK
+============================================================ */
+
+function applyPointForPlayerAction(g,s,category,result){
+
+  let ourPoint=false;
+  let opponentPoint=false;
+
+  if(category==="attack"){
+
+    if(result==="kill") ourPoint=true;
+
+    if(
+      result==="error" ||
+      result==="blocked"
+    ) opponentPoint=true;
+
+  }
+
+
+  if(category==="reception"){
+
+    if(result==="error")
+      opponentPoint=true;
+
+  }
+
+
+  if(category==="serve"){
+
+    if(result==="ace")
+      ourPoint=true;
+
+    if(result==="error")
+      opponentPoint=true;
+
+  }
+
+
+  if(category==="block"){
+
+    if(result==="point")
+      ourPoint=true;
+
+    if(result==="error")
+      opponentPoint=true;
+
+  }
+
+
+  if(category==="defense"){
+
+    if(result==="error")
+      opponentPoint=true;
+
+  }
+
+
+  awardPoint(
+    g,
+    s,
+    ourPoint ? "us" : "opponent"
+  );
+
+}
+
+
+/* ============================================================
+   PUNKT / ROTATION
+============================================================ */
+
+function awardPoint(g,s,winner){
+
+  if(winner==="us"){
+
+    s.ourScore++;
+
+    /*
+      WIR gewinnen:
+
+      Wenn wir schon aufschlagen:
+      → Punkt, keine Rotation.
+
+      Wenn Gegner aufschlägt:
+      → Side-out:
+      Punkt + Rotation + Aufschlag zu uns.
+    */
+
+    if(s.servingTeam==="opponent"){
+
+      rotate(s);
+
+      s.servingTeam="us";
+
+    }
+
+  }else{
+
+    s.opponentScore++;
+
+    /*
+      Wenn wir aufschlagen und verlieren:
+      Gegner bekommt Aufschlag.
+      Keine Rotation.
+
+      Wenn Gegner schon aufschlägt:
+      Keine Rotation.
+    */
+
+    if(s.servingTeam==="us"){
+
+      s.servingTeam="opponent";
+
+    }
+
+  }
+
+}
+
+
+function rotate(s){
+
+  const old={...s.rotation};
+
+  /*
+    1 → 6
+    6 → 5
+    5 → 4
+    4 → 3
+    3 → 2
+    2 → 1
+  */
+
+  s.rotation[6]=old[1];
+  s.rotation[5]=old[6];
+  s.rotation[4]=old[5];
+  s.rotation[3]=old[4];
+  s.rotation[2]=old[3];
+  s.rotation[1]=old[2];
+
+}
+
+
+/* ============================================================
+   GEGNERFEHLER
+============================================================ */
+
+function openOpponentErrors(){
+
+  const options=[
+
+    ["serveOut","Aufschlag ins Aus"],
+    ["serveNet","Aufschlag ins Netz"],
+    ["attackOut","Angriff ins Aus"],
+    ["attackNet","Angriff ins Netz"],
+    ["netRotation","Netz / Rotation"],
+    ["other","Sonstiger Fehler"]
+
+  ];
+
+  const text =
+    options
+      .map(
+        (x,i)=>`${i+1}: ${x[1]}`
+      )
+      .join("\n");
+
+  const answer =
+    prompt(
+      "Gegnerfehler auswählen:\n\n"+text+"\n\nNummer eingeben:"
+    );
+
+  if(!answer) return;
+
+  const n=parseInt(answer);
+
+  if(n<1 || n>6) return;
+
+  recordOpponentError(
+    options[n-1][0],
+    options[n-1][1]
+  );
+
+}
+
+
+function recordOpponentError(type,label){
+
+  const g=activeGame();
+  const s=currentSet();
+
+  const action={
+
+    id:id(),
+    time:Date.now(),
+
+    playerId:null,
+
+    category:"opponentError",
+
+    result:type,
+
+    text:`Gegnerfehler: ${label}`,
+
+    ourScoreBefore:s.ourScore,
+    opponentScoreBefore:s.opponentScore,
+
+    servingBefore:s.servingTeam
+
+  };
+
+  s.actions.push(action);
+
+  /*
+    Gegnerfehler = Punkt für uns.
+    Bei gegnerischem Aufschlag:
+    Side-out + Rotation.
+  */
+
+  awardPoint(g,s,"us");
+
+  s.lastAction=action;
+
+  saveData();
+
+  checkSetEnd();
+
+  render();
+
+}
+
+
+/* ============================================================
+   SET ENDE
+============================================================ */
+
+function setTarget(s){
+
+  /*
+    Satz 1–4:
+    mindestens 25 und 2 Punkte Vorsprung
+
+    Satz 5:
+    mindestens 15 und 2 Punkte Vorsprung
+  */
+
+  const g=activeGame();
+
+  const isFifth=s.number===5;
+
+  return isFifth ? 15 : 25;
+
+}
+
+
+function isSetWon(s){
+
+  const target=setTarget(s);
+
+  return (
+    (s.ourScore>=target &&
+     s.ourScore-s.opponentScore>=2)
+
+    ||
+
+    (s.opponentScore>=target &&
+     s.opponentScore-s.ourScore>=2)
+  );
+
+}
+
+
+function checkSetEnd(){
+
+  const g=activeGame();
+  const s=currentSet();
+
+  if(!isSetWon(s)) return;
+
+  const ourWon =
+    s.ourScore>s.opponentScore;
+
+  setTimeout(()=>{
+
+    const dist =
+      confirm(
+        `Satz ${s.number} beendet: `+
+        `${s.ourScore}:${s.opponentScore}\n\n`+
+        `Möchtest du jetzt die Zuspielverteilung eingeben?`
+      );
+
+    if(dist){
+
+      openDistributionModal();
+
+    }else{
+
+      continueAfterSet();
+
+    }
+
+  },50);
+
+}
+
+
+function continueAfterSet(){
+
+  const g=activeGame();
+
+  const won=ourSetsWon(g);
+  const lost=oppSetsWon(g);
+
+  const needed =
+    g.rule==="bestof5" ? 3 : 2;
+
+  if(won>=needed || lost>=needed){
+
+    finishGame();
+
+    return;
+
+  }
+
+  /*
+    Für den nächsten Satz wird der Aufschlag
+    vom Ende des vorherigen Satzes übernommen.
+  */
+
+  const previous=currentSet();
+
+  g.servingTeam =
+    previous.servingTeam;
+
+  addSet(g);
+
+  /*
+    Aufstellung wird zunächst aus dem letzten Satz
+    übernommen.
+  */
+
+  const previousRotation=previous.rotation;
+
+  currentSet().rotation={
+    ...previousRotation
+  };
+
+  saveData();
+
+  render();
+
+}
+
+
+/* ============================================================
+   SÄTZE GEWONNEN
+============================================================ */
+
+function ourSetsWon(g){
+
+  return g.sets.filter(
+    s=>s.ourScore>s.opponentScore && isSetFinished(s)
+  ).length;
+
+}
+
+
+function oppSetsWon(g){
+
+  return g.sets.filter(
+    s=>s.opponentScore>s.ourScore && isSetFinished(s)
+  ).length;
+
+}
+
+
+function isSetFinished(s){
+
+  return isSetWon(s);
+
+}
+
+
+/* ============================================================
+   MANUELLES SPIELENDE
+============================================================ */
+
+function finishGameManually(){
+
+  if(
+    !confirm(
+      "Spiel wirklich beenden?"
+    )
+  ) return;
+
+  finishGame();
+
+}
+
+
+function finishGame(){
+
+  const g=activeGame();
+
+  if(!g) return;
+
+  const us=ourSetsWon(g);
+  const opp=oppSetsWon(g);
+
+  g.finished=true;
+
+  if(us>opp)
+    g.result="win";
+  else if(opp>us)
+    g.result="loss";
+  else
+    g.result="draw";
+
+  saveData();
+
+  showPage("games");
+
+}
+
+
+/* ============================================================
+   AKTIONSFEED
+============================================================ */
+
+function actionFeedHTML(a){
+
+  return `
+
+    <div class="feed-row">
+
+      <span>
+        ${escapeHTML(a.text)}
+      </span>
+
+      <span class="feed-points">
+
+        ${
+          a.ourScoreBefore!==undefined
+          ? `${a.ourScoreBefore}:${a.opponentScoreBefore}`
+          : ""
+        }
+
+      </span>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   RÜCKGÄNGIG
+============================================================ */
+
+function undoLastAction(){
+
+  const g=activeGame();
+  const s=currentSet();
+
+  if(!s.actions.length){
+
+    alert("Keine Aktion vorhanden.");
+    return;
+
+  }
+
+  /*
+    Für zuverlässiges Undo:
+    Spielstand des Satzes komplett aus den Aktionen
+    neu berechnen.
+  */
+
+  s.actions.pop();
+
+  rebuildSet(s,g);
+
+  saveData();
+  render();
+
+}
+
+
+function rebuildSet(s,g){
+
+  s.ourScore=0;
+  s.opponentScore=0;
+
+  s.servingTeam=
+    s.number===1
+      ? g.sets[0].servingTeam
+      : g.sets[s.number-2]?.servingTeam || "us";
+
+  /*
+    Ausgangsrotation nicht verändern.
+    Für eine saubere Live-Anwendung bleibt die aktuelle
+    Aufstellung bestehen.
+  */
+
+  s.lastAction=
+    s.actions.length
+      ? s.actions[s.actions.length-1]
+      : null;
+
+  for(const a of s.actions){
+
+    if(a.category==="opponentError"){
+
+      awardPoint(g,s,"us");
+
+    }else{
+
+      let winner=null;
+
+      if(
+        (a.category==="attack" &&
+         a.result==="kill") ||
+
+        (a.category==="serve" &&
+         a.result==="ace") ||
+
+        (a.category==="block" &&
+         a.result==="point")
+      ){
+
+        winner="us";
+
+      }
+
+      if(
+        (a.category==="attack" &&
+         ["error","blocked"].includes(a.result)) ||
+
+        (a.category==="reception" &&
+         a.result==="error") ||
+
+        (a.category==="serve" &&
+         a.result==="error") ||
+
+        (a.category==="block" &&
+         a.result==="error") ||
+
+        (a.category==="defense" &&
+         a.result==="error")
+      ){
+
+        winner="opponent";
+
+      }
+
+      if(winner)
+        awardPoint(g,s,winner);
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   AKTUELLE SATZANALYSE
+============================================================ */
+
+function renderCurrentSetAnalysis(s){
+
+  return analysisCards(s.actions);
+
+}
+
+
+function analysisCards(actions){
+
+  const attack=
+    actions.filter(a=>a.category==="attack");
+
+  const attackKills=
+    attack.filter(a=>a.result==="kill").length;
+
+  const reception=
+    actions.filter(a=>a.category==="reception");
+
+  const receptionPositive=
+    reception.filter(a=>a.result==="positive").length;
+
+  const defense=
+    actions.filter(a=>a.category==="defense");
+
+  const defenseSuccessful=
+    defense.filter(a=>a.result==="successful").length;
+
+  const serve=
+    actions.filter(a=>a.category==="serve");
+
+  const aces=
+    serve.filter(a=>a.result==="ace").length;
+
+  const blocks=
+    actions.filter(a=>a.category==="block");
+
+  const blockPoints=
+    blocks.filter(a=>a.result==="point").length;
+
+  return `
+
+    <div class="grid grid-3">
+
+      ${metricCard(
+        attackKills,
+        pct(attackKills,attack.length),
+        "Angriff",
+        "Erfolgsquote"
+      )}
+
+      ${metricCard(
+        receptionPositive,
+        pct(receptionPositive,reception.length),
+        "Annahme",
+        "Positiv"
+      )}
+
+      ${metricCard(
+        defenseSuccessful,
+        pct(defenseSuccessful,defense.length),
+        "Abwehr",
+        "Erfolgreich"
+      )}
+
+      ${metricCard(
+        aces,
+        aces,
+        "Aufschlag",
+        "Asse"
+      )}
+
+      ${metricCard(
+        blockPoints,
+        blockPoints,
+        "Block",
+        "Punkte"
+      )}
+
+      ${metricCard(
+        actions.length,
+        actions.length,
+        "Aktionen",
+        "Gesamt"
+      )}
+
+    </div>
+
+  `;
+
+}
+
+
+function metricCard(number,percentage,label,sub){
+
+  return `
+
+    <div class="metric">
+
+      <div class="number">
+        ${percentage}${sub==="Asse"||sub==="Punkte"||sub==="Gesamt" ? "" : "%"}
+      </div>
+
+      <div class="label">
+        ${label} · ${sub}
+      </div>
+
+      ${
+        sub==="Erfolgsquote" ||
+        sub==="Positiv" ||
+        sub==="Erfolgreich"
+
+        ? `
+          <div class="progress">
+            <div style="width:${percentage}%"></div>
+          </div>
+        `
+
+        : ""
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   VERTEILUNG
+============================================================ */
+
+function openDistributionModal(){
+
+  document.getElementById("distOH1").value=0;
+  document.getElementById("distOH2").value=0;
+  document.getElementById("distOPP").value=0;
+  document.getElementById("distMB").value=0;
+  document.getElementById("distPipe").value=0;
+  document.getElementById("distOther").value=0;
+
+  openModal("distributionModal");
+
+}
+
+
+function saveDistribution(){
+
+  const s=currentSet();
+
+  s.distribution={
+
+    oh1:+document.getElementById("distOH1").value||0,
+    oh2:+document.getElementById("distOH2").value||0,
+    opp:+document.getElementById("distOPP").value||0,
+    mb:+document.getElementById("distMB").value||0,
+    pipe:+document.getElementById("distPipe").value||0,
+    other:+document.getElementById("distOther").value||0
+
+  };
+
+  saveData();
+
+  closeModal("distributionModal");
+
+  continueAfterSet();
+
+}
+
+
+/* ============================================================
+   FINISHED GAME
+============================================================ */
+
+function renderFinishedGame(){
+
+  const g=activeGame();
+
+  if(!g) return;
+
+  const container=
+    document.getElementById("livePage");
+
+  const us=ourSetsWon(g);
+  const opp=oppSetsWon(g);
+
+  container.innerHTML=`
+
+    <div class="page-title">
+
+      <div>
+        <h1>
+          ${escapeHTML(g.opponent)}
+        </h1>
+
+        <p>
+          ${escapeHTML(g.date)}
+          · Endstand ${us}:${opp}
+        </p>
+
+      </div>
+
+      <button class="btn btn-light"
+              onclick="showPage('games')">
+        Zurück
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>Spielanalyse</h2>
+
+      ${renderMatchAnalysis(g)}
+
+    </div>
+
+
+    <div class="card" style="margin-top:15px">
+
+      <h2>Spieler</h2>
+
+      ${renderPlayerAnalysis(g)}
+
+    </div>
+
+
+    <div class="card" style="margin-top:15px">
+
+      <h2>Sätze</h2>
+
+      ${renderSetAnalysis(g)}
+
+    </div>
+
+
+    <div class="card" style="margin-top:15px">
+
+      <h2>Zuspielverteilung</h2>
+
+      ${renderDistributionAnalysis(g)}
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   MATCH ANALYSE
+============================================================ */
+
+function allActions(g){
+
+  return g.sets.flatMap(
+    s=>s.actions
+  );
+
+}
+
+
+function renderMatchAnalysis(g){
+
+  return analysisCards(allActions(g));
+
+}
+
+
+/* ============================================================
+   SPIELERANALYSE
+============================================================ */
+
+function renderPlayerAnalysis(g){
+
+  const actions=allActions(g);
+
+  const rows=team().players.map(p=>{
+
+    const pa=
+      actions.filter(
+        a=>a.playerId===p.id
+      );
+
+    const attacks=
+      pa.filter(
+        a=>a.category==="attack"
+      );
+
+    const attackKills=
+      attacks.filter(
+        a=>a.result==="kill"
+      ).length;
+
+    const receptions=
+      pa.filter(
+        a=>a.category==="reception"
+      );
+
+    const positive=
+      receptions.filter(
+        a=>a.result==="positive"
+      ).length;
+
+    const defenses=
+      pa.filter(
+        a=>a.category==="defense"
+      );
+
+    const successful=
+      defenses.filter(
+        a=>a.result==="successful"
+      ).length;
+
+    const serves=
+      pa.filter(
+        a=>a.category==="serve"
+      );
+
+    const aces=
+      serves.filter(
+        a=>a.result==="ace"
+      ).length;
+
+    const blocks=
+      pa.filter(
+        a=>a.category==="block"
+      );
+
+    const blockPoints=
+      blocks.filter(
+        a=>a.result==="point"
+      ).length;
+
+    return `
+
+      <tr>
+
+        <td>
+          <strong>#${escapeHTML(p.number)}</strong>
+          ${escapeHTML(p.name)}
+        </td>
+
+        <td>
+          ${attackKills}/${attacks.length}
+          (${pct(attackKills,attacks.length)}%)
+        </td>
+
+        <td>
+          ${positive}/${receptions.length}
+          (${pct(positive,receptions.length)}%)
+        </td>
+
+        <td>
+          ${successful}/${defenses.length}
+          (${pct(successful,defenses.length)}%)
+        </td>
+
+        <td>${aces}</td>
+
+        <td>${blockPoints}</td>
+
+        <td>${pa.length}</td>
+
+      </tr>
+
+    `;
+
+  }).join("");
+
+  return `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Spieler</th>
+            <th>Angriff</th>
+            <th>Annahme</th>
+            <th>Abwehr</th>
+            <th>Asse</th>
+            <th>Block</th>
+            <th>Aktionen</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   SATZANALYSE
+============================================================ */
+
+function renderSetAnalysis(g){
+
+  return `
+
+    <div class="grid grid-2">
+
+      ${
+        g.sets.map(s=>`
+
+          <div class="card"
+               style="background:#f7f8fa">
+
+            <h3>
+              Satz ${s.number}
+            </h3>
+
+            <div style="font-size:28px;font-weight:950">
+              ${s.ourScore}:${s.opponentScore}
+            </div>
+
+            <div class="muted"
+                 style="margin-top:8px">
+
+              ${analysisCards(s.actions)}
+
+            </div>
+
+          </div>
+
+        `).join("")
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   ZUSPIELVERTEILUNG
+============================================================ */
+
+function renderDistributionAnalysis(g){
+
+  const sets=
+    g.sets.filter(
+      s=>s.distribution
+    );
+
+  if(!sets.length){
+
+    return `
+      <div class="empty">
+        Noch keine Zuspielverteilung eingetragen.
+      </div>
+    `;
+
+  }
+
+  const totals={
+    oh1:0,
+    oh2:0,
+    opp:0,
+    mb:0,
+    pipe:0,
+    other:0
+  };
+
+  sets.forEach(s=>{
+
+    Object.keys(totals).forEach(k=>{
+
+      totals[k]+=s.distribution[k]||0;
+
+    });
+
+  });
+
+  const total=
+    Object.values(totals)
+      .reduce((a,b)=>a+b,0);
+
+  return `
+
+    <div class="grid grid-3">
+
+      ${distributionCard(
+        "Außen links",
+        totals.oh1,
+        total
+      )}
+
+      ${distributionCard(
+        "Außen rechts",
+        totals.oh2,
+        total
+      )}
+
+      ${distributionCard(
+        "Diagonal",
+        totals.opp,
+        total
+      )}
+
+      ${distributionCard(
+        "Mitte",
+        totals.mb,
+        total
+      )}
+
+      ${distributionCard(
+        "Pipe",
+        totals.pipe,
+        total
+      )}
+
+      ${distributionCard(
+        "Sonstige",
+        totals.other,
+        total
+      )}
+
+    </div>
+
+    <div class="table-wrap" style="margin-top:15px">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Satz</th>
+            <th>Außen L</th>
+            <th>Außen R</th>
+            <th>Diagonal</th>
+            <th>Mitte</th>
+            <th>Pipe</th>
+            <th>Sonstige</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            sets.map(s=>`
+
+              <tr>
+
+                <td>Satz ${s.number}</td>
+                <td>${s.distribution.oh1}</td>
+                <td>${s.distribution.oh2}</td>
+                <td>${s.distribution.opp}</td>
+                <td>${s.distribution.mb}</td>
+                <td>${s.distribution.pipe}</td>
+                <td>${s.distribution.other}</td>
+
+              </tr>
+
+            `).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+function distributionCard(label,value,total){
+
+  return `
+
+    <div class="metric">
+
+      <div class="number">
+        ${value}
+      </div>
+
+      <div class="label">
+        ${label}
+        · ${pct(value,total)}%
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   KADER
+============================================================ */
+
+function renderRoster(){
+
+  const players=team().players;
+
+  document.getElementById("rosterList").innerHTML=
+
+    players.length
+
+    ? players.map(p=>`
+
+      <div class="roster-row">
+
+        <div class="roster-number">
+          #${escapeHTML(p.number)}
+        </div>
+
+        <div>
+          <strong>${escapeHTML(p.name)}</strong>
+        </div>
+
+        <div class="position-col">
+          <span class="badge">
+            ${escapeHTML(p.position)}
+          </span>
+        </div>
+
+        <div class="key-col">
+          <span class="badge">
+            ${p.key
+              ? p.key<=9
+                ? p.key
+                : "Shift+"+(p.key-9)
+              : "—"}
+          </span>
+        </div>
+
+        <div>
+
+          <button class="btn btn-light btn-small"
+                  onclick="editPlayer('${p.id}')">
+            Bearbeiten
+          </button>
+
+          <button class="btn btn-red btn-small"
+                  onclick="deletePlayer('${p.id}')">
+            Löschen
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    : `<div class="empty">Noch keine Spieler angelegt.</div>`;
+
+}
+
+
+/* ============================================================
+   SPIELER VERWALTEN
+============================================================ */
+
+function openPlayerModal(){
+
+  document.getElementById("playerModalTitle")
+    .textContent="Spieler hinzufügen";
+
+  document.getElementById("playerEditId").value="";
+  document.getElementById("playerName").value="";
+  document.getElementById("playerNumber").value="";
+  document.getElementById("playerPosition").value="Außenangriff";
+  document.getElementById("playerKey").value="";
+
+  openModal("playerModal");
+
+}
+
+
+function editPlayer(pid){
+
+  const p=playerById(pid);
+
+  if(!p) return;
+
+  document.getElementById("playerModalTitle")
+    .textContent="Spieler bearbeiten";
+
+  document.getElementById("playerEditId").value=p.id;
+  document.getElementById("playerName").value=p.name;
+  document.getElementById("playerNumber").value=p.number;
+  document.getElementById("playerPosition").value=p.position;
+  document.getElementById("playerKey").value=p.key||"";
+
+  openModal("playerModal");
+
+}
+
+
+function savePlayer(){
+
+  const name=
+    document.getElementById("playerName")
+      .value.trim();
+
+  const number=
+    parseInt(
+      document.getElementById("playerNumber").value
+    );
+
+  const position=
+    document.getElementById("playerPosition").value;
+
+  const keyValue=
+    document.getElementById("playerKey").value;
+
+  const key=
+    keyValue ? parseInt(keyValue) : null;
+
+  const editId=
+    document.getElementById("playerEditId").value;
+
+  if(!name){
+
+    alert("Bitte einen Namen eingeben.");
+    return;
+
+  }
+
+  if(Number.isNaN(number)){
+
+    alert("Bitte eine Trikotnummer eingeben.");
+    return;
+
+  }
+
+  const duplicateNumber=
+    team().players.find(
+      p=>p.number===number && p.id!==editId
+    );
+
+  if(duplicateNumber){
+
+    alert("Diese Trikotnummer ist bereits vergeben.");
+    return;
+
+  }
+
+  if(key){
+
+    const duplicateKey=
+      team().players.find(
+        p=>p.key===key && p.id!==editId
+      );
+
+    if(duplicateKey){
+
+      alert("Diese Numpad-Taste ist bereits vergeben.");
+      return;
+
+    }
+
+  }
+
+  if(editId){
+
+    const p=playerById(editId);
+
+    p.name=name;
+    p.number=number;
+    p.position=position;
+    p.key=key;
+
+  }else{
+
+    team().players.push({
+
+      id:id(),
+      name,
+      number,
+      position,
+      key
+
+    });
+
+  }
+
+  saveData();
+
+  closeModal("playerModal");
+
+  render();
+
+}
+
+
+function deletePlayer(pid){
+
+  const p=playerById(pid);
+
+  if(!p) return;
+
+  if(
+    !confirm(
+      `${p.name} wirklich löschen?`
+    )
+  ) return;
+
+  team().players=
+    team().players.filter(
+      x=>x.id!==pid
+    );
+
+  /*
+    Spieler aus allen Aufstellungen entfernen.
+  */
+
+  team().games.forEach(g=>{
+
+    g.sets.forEach(s=>{
+
+      Object.keys(s.rotation)
+        .forEach(pos=>{
+
+          if(s.rotation[pos]===pid)
+            s.rotation[pos]=null;
+
+        });
+
+    });
+
+  });
+
+  saveData();
+  render();
+
+}
+
+
+/* ============================================================
+   SAISON
+============================================================ */
+
+function renderSeason(){
+
+  const games=team().games;
+
+  const finished=
+    games.filter(g=>g.finished);
+
+  const wins=
+    finished.filter(g=>g.result==="win").length;
+
+  const losses=
+    finished.filter(g=>g.result==="loss").length;
+
+  const pointsFor=
+    finished.reduce(
+      (sum,g)=>
+        sum+
+        g.sets.reduce(
+          (s,x)=>s+x.ourScore,0
+        ),
+      0
+    );
+
+  const pointsAgainst=
+    finished.reduce(
+      (sum,g)=>
+        sum+
+        g.sets.reduce(
+          (s,x)=>s+x.opponentScore,0
+        ),
+      0
+    );
+
+  document.getElementById("seasonPage").innerHTML=`
+
+    <div class="grid grid-4">
+
+      <div class="card metric">
+        <div class="number">${finished.length}</div>
+        <div class="label">Spiele</div>
+      </div>
+
+      <div class="card metric">
+        <div class="number">${wins}</div>
+        <div class="label">Siege</div>
+      </div>
+
+      <div class="card metric">
+        <div class="number">${losses}</div>
+        <div class="label">Niederlagen</div>
+      </div>
+
+      <div class="card metric">
+        <div class="number">
+          ${pct(wins,finished.length)}%
+        </div>
+        <div class="label">Siegquote</div>
+      </div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:15px">
+
+      <h3>Punkte</h3>
+
+      <div class="grid grid-2">
+
+        <div class="metric">
+          <div class="number">${pointsFor}</div>
+          <div class="label">eigene Punkte</div>
+        </div>
+
+        <div class="metric">
+          <div class="number">${pointsAgainst}</div>
+          <div class="label">gegnerische Punkte</div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:15px">
+
+      <h3>Spiele</h3>
+
+      ${
+        games.length
+        ? games.map(gameRowHTML).join("")
+        : `<div class="empty">Noch keine Spiele.</div>`
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   MODALS
+============================================================ */
+
+function openModal(id){
+
+  document
+    .getElementById(id)
+    .classList.add("show");
+
+}
+
+
+function closeModal(id){
+
+  document
+    .getElementById(id)
+    .classList.remove("show");
+
+}
+
+
+/* ============================================================
+   KEYBOARD / NUMPAD
+============================================================ */
+
+document.addEventListener("keydown",event=>{
+
+  /*
+    Keine Tastatursteuerung, wenn gerade ein Eingabefeld
+    aktiv ist.
+  */
+
+  const tag=
+    document.activeElement?.tagName;
+
+  if(
+    tag==="INPUT" ||
+    tag==="TEXTAREA" ||
+    tag==="SELECT"
+  ) return;
+
+  const g=activeGame();
+
+  if(!g || g.finished) return;
+
+  const s=currentSet();
+
+  let key=null;
+
+  if(event.shiftKey){
+
+    const n=
+      parseInt(event.key);
+
+    if(n>=1 && n<=5){
+
+      key=n+9;
+
+    }
+
+  }else{
+
+    const n=
+      parseInt(event.key);
+
+    if(!Number.isNaN(n))
+      key=n;
+
+  }
+
+  /*
+    Spieler auswählen
+  */
+
+  if(!s.selectedPlayer && key){
+
+    const p=
+      team().players.find(
+        x=>x.key===key
+      );
+
+    if(p){
+
+      selectPlayer(p.id);
+      event.preventDefault();
+      return;
+
+    }
+
+  }
+
+  /*
+    Gegnerfehler-Modus
+  */
+
+  if(
+    s.opponentErrorMode &&
+    key>=1 &&
+    key<=6
+  ){
+
+    const errors=[
+
+      ["serveOut","Aufschlag ins Aus"],
+      ["serveNet","Aufschlag ins Netz"],
+      ["attackOut","Angriff ins Aus"],
+      ["attackNet","Angriff ins Netz"],
+      ["netRotation","Netz / Rotation"],
+      ["other","Sonstiger Fehler"]
+
+    ];
+
+    recordOpponentError(
+      errors[key-1][0],
+      errors[key-1][1]
+    );
+
+    s.opponentErrorMode=false;
+
+    return;
+
+  }
+
+  /*
+    0 startet Gegnerfehler.
+  */
+
+  if(event.key==="0"){
+
+    s.opponentErrorMode=true;
+
+    alert(
+      "Gegnerfehler-Modus:\n\n"+
+      "1 Aufschlag aus\n"+
+      "2 Aufschlag Netz\n"+
+      "3 Angriff aus\n"+
+      "4 Angriff Netz\n"+
+      "5 Netz/Rotation\n"+
+      "6 Sonstiger Fehler"
+    );
+
+    return;
+
+  }
+
+  /*
+    Kategorie
+  */
+
+  if(
+    s.selectedPlayer &&
+    ["1","2","3","4","5"].includes(event.key)
+  ){
+
+    const map={
+      "1":"attack",
+      "2":"reception",
+      "3":"serve",
+      "4":"block",
+      "5":"defense"
+    };
+
+    if(!s.selectedCategory){
+
+      selectCategory(
+        map[event.key]
+      );
+
+      return;
+
+    }
+
+  }
+
+  /*
+    Ergebnis
+  */
+
+  if(
+    s.selectedPlayer &&
+    s.selectedCategory
+  ){
+
+    const cat=categories[s.selectedCategory];
+
+    const n=
+      parseInt(event.key);
+
+    if(
+      n>=1 &&
+      n<=cat.results.length
+    ){
+
+      recordAction(
+        s.selectedCategory,
+        cat.results[n-1][0]
+      );
+
+    }
+
+  }
+
+});
+
+
+/* ============================================================
+   EXPORT
+============================================================ */
+
+function exportData(){
+
+  const blob=
+    new Blob(
+      [JSON.stringify(data,null,2)],
+      {type:"application/json"}
+    );
+
+  const url=
+    URL.createObjectURL(blob);
+
+  const a=
+    document.createElement("a");
+
+  a.href=url;
+  a.download="volleystats-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+
+/* ============================================================
+   IMPORT
+============================================================ */
+
+function importData(){
+
+  const input=
+    document.createElement("input");
+
+  input.type="file";
+  input.accept=".json";
+
+  input.onchange=e=>{
+
+    const file=e.target.files[0];
+
+    if(!file) return;
+
+    const reader=new FileReader();
+
+    reader.onload=()=>{
+
+      try{
+
+        const imported=
+          JSON.parse(reader.result);
+
+        if(
+          !imported.teams ||
+          !imported.activeTeam
+        ){
+
+          throw new Error();
+
+        }
+
+        data=imported;
+
+        saveData();
+
+        render();
+
+        alert("Daten erfolgreich importiert.");
+
+      }catch{
+
+        alert("Die Datei konnte nicht importiert werden.");
+
+      }
+
+    };
+
+    reader.readAsText(file);
+
+  };
+
+  input.click();
+
+}
+
+
+/* ============================================================
+   OPTIONAL: EXPORT / IMPORT ÜBER KONSOLE
+============================================================ */
+
+window.exportVolleyStats=exportData;
+window.importVolleyStats=importData;
+
+
+/* ============================================================
+   GESAMT-RENDER
+============================================================ */
+
+function render(){
+
+  renderTeamSelector();
+
+  renderHome();
+  renderGames();
+  renderRoster();
+  renderSeason();
+
+  if(data.ui.page==="live"){
+
+    renderLive();
+
+  }
+
+}
+
+
+/* ============================================================
+   START
+============================================================ */
+
+render();
+
+</script>
+
+</body>
+</html>
